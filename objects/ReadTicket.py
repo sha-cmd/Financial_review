@@ -5,6 +5,7 @@ import sqlite3
 from sqlite3 import OperationalError
 from pandas.io.sql import DatabaseError
 from .CreateTicket import CreateTicketGroup
+from .Ticket import Ticket
 from .logger import log_init
 from .db_conn import connexion
 from .db_conn import write_to_db
@@ -16,10 +17,10 @@ logger = log_init()
 
 class ReadTicket:
 
-    def __init__(self, name: str, info: str=''):
-        self.name = name
+    def __init__(self, ticket: Ticket, info: str=''):
+        self.name = ticket.name
         self.info = info if (info == 'info') else ''
-        self.table = name.lower().replace(' ', '_')
+        self.table = self.name.lower().replace(' ', '_')
 
     def execute(self):
         conn = connexion()
