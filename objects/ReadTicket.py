@@ -25,13 +25,12 @@ class ReadTicket:
     def execute(self):
         conn = connexion()
         suffix = '_info' if self.info == 'info' else ''
+
         try:
-            self.df = pd.read_sql_query("SELECT * FROM " + self.table + suffix, conn, index_col='index')
-            print(self.df)
+            df = pd.read_sql_query("SELECT * FROM " + self.table + suffix, conn, index_col='index')
+            return(True, df.index[-1], df.index[0])
 
         except (OperationalError, DatabaseError) as e:
             logger.debug(self.name + ' n\'est pas dans la table')
             print(e, 'Class ReadTicket')
-
-
 
