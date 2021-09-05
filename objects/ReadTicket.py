@@ -28,7 +28,7 @@ class ReadTicket:
 
         try:
             df = pd.read_sql_query("SELECT * FROM " + self.table + suffix, conn, index_col='index')
-            return(True, df.index[-1], df.index[0])
+            return(True, str(df.index[0]).split(' ')[0], str(df.index[-1]).split(' ')[0])
 
         except (OperationalError, DatabaseError) as e:
             logger.debug(self.name + ' n\'est pas dans la table')
