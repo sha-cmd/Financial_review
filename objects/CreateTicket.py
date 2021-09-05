@@ -1,6 +1,8 @@
 
 from objects.logger import log_init as log
 logger = log()
+
+
 class CreateTicketGroup:
 
     def __init__(self, names):

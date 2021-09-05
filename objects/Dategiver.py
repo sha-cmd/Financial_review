@@ -6,7 +6,7 @@ from objects.logger import log_init as log
 logger = log()
 
 
-class Dategiver():
+class Dategiver:
 
     def __init__(self, checker: Checker, clock: Clock):
         self.conclusion: bool = not (clock.last_day == np.datetime64(checker.date_end))
