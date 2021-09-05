@@ -1,6 +1,9 @@
 import yfinance as yf
 import pandas as pd
+import sqlite3
 
+from sqlite3 import OperationalError
+from pandas.io.sql import DatabaseError
 from .CreateTicket import CreateTicketGroup
 from .logger import log_init
 from .db_conn import connexion
@@ -13,7 +16,7 @@ logger = log_init()
 
 class ReadTicket:
 
-    def __init__(self, name, info):
+    def __init__(self, name: str, info: str=''):
         self.name = name
         self.info = info if (info == 'info') else ''
         self.table = name.lower().replace(' ', '_')
@@ -21,5 +24,13 @@ class ReadTicket:
     def execute(self):
         conn = connexion()
         suffix = '_info' if self.info == 'info' else ''
-        df = pd.read_sql_query("SELECT * FROM " + self.table + suffix, conn, index_col='index')
-        print(df)
+        try:
+            self.df = pd.read_sql_query("SELECT * FROM " + self.table + suffix, conn, index_col='index')
+            print(self.df)
+
+        except (OperationalError, DatabaseError) as e:
+            logger.debug(self.name + ' n\'est pas dans la table')
+            print(e, 'Class ReadTicket')
+
+
+
