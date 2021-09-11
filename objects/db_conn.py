@@ -22,8 +22,8 @@ def connexion():
     logger.debug('Connexion à la base ' + DB_PATH)
     return conn
 
-def write_to_db(df, name, con):
-    df.to_sql(name, con, if_exists=IF_EXIST)
+def write_to_db(df, name, con, if_exist=IF_EXIST):
+    df.to_sql(name, con, if_exists=if_exist)
     logger.debug('Écriture de ' + name + ' en base')
 
 def close_connexion(conn):
