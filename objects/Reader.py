@@ -35,7 +35,7 @@ class Reader:
         suffix = '_info' if self.info == 'info' else ''
 
         try:
-            df = pd.read_sql_query("SELECT * FROM " + self.table + suffix, conn, index_col='date')
+            df = pd.read_sql_query("SELECT * FROM `" + self.table + suffix + "`", conn, index_col='date')
             return True, str(df.index[0]).split(' ')[0], str(df.index[-1]).split(' ')[0]
 
         except (OperationalError, DatabaseError) as e:
@@ -48,7 +48,7 @@ class Reader:
         suffix = '_info' if self.info == 'info' else ''
 
         try:
-            df = pd.read_sql_query("SELECT * FROM " + self.table + suffix, conn, index_col='date')
+            df = pd.read_sql_query("SELECT * FROM `" + self.table + suffix + "`", conn, index_col='date')
             return df
 
         except (OperationalError, DatabaseError) as e:
