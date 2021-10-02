@@ -8,6 +8,6 @@ logger = log()
 class Ticket:
 
     def __init__(self, name: str):
-        self.name = name.upper()
+        self.name = name
         self.mnemo = liste_complete()[1][self.name]
         self.name_table = self.name.lower().replace(' ', '_')
