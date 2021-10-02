@@ -1,4 +1,6 @@
-
+"""
+Cette classe lit en base de données, puis informe de la présence du titre par un booléen en liste.
+"""
 from objects.Reader import Reader
 from objects.Ticket import Ticket
 from objects.logger import log_init as log
