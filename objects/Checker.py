@@ -1,5 +1,6 @@
 """
 Cette classe lit en base de données, puis informe de la présence du titre par un booléen en liste.
+Elle donne en plus les dates de commencement et de fin du Ticket.
 """
 from objects.Reader import Reader
 from objects.Ticket import Ticket
