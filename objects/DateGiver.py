@@ -1,3 +1,7 @@
+"""
+Renvoie les informations importantes sur le comportement à avoir au-moment du téléchargement, i.e. la date
+de fin en fonction de la date du jour en cours.
+"""
 import numpy as np
 
 from objects.Checker import Checker
@@ -7,7 +11,7 @@ from objects.logger import log_init as log
 logger = log()
 
 
-class Dategiver:
+class DateGiver:
 
     def __init__(self, checker: Checker, clock: Clock):
         self.checker = checker
