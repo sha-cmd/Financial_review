@@ -15,5 +15,4 @@ class FetchAndSave:
         self.sharpen()
         Writer(self.downloader)
 
-    def sharpen(self):
-        self.downloader.data.drop(['dividends', 'stock_splits'], axis=1, inplace=True)
+
