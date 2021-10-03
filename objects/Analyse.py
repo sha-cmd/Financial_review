@@ -30,6 +30,7 @@ class Analyse:
         self.price = {str(): Decimal()}
         self.avg_cac40 = {str(): Decimal()}
         self.beta = {}
+        self.risk = {}
         self.dictionnaire_beta = {}
         self.trans = {}
         self.df = pd.read_excel('tex/Strategie_PME.xlsx')
@@ -78,9 +79,12 @@ class Analyse:
         data_cac40 = Reader(Ticket('CAC 40')).read()
         try:
             self.avg_cac40.update({name: round(((data_cac40.at[data.index[-1], 'close'] /
-                                             data_cac40.at[data.index[0], 'close']) - 1) * 100, 2)})
+                                                 data_cac40.at[data.index[0], 'close']) - 1) * 100, 2)})
         except:
             self.avg_cac40.update({name: 0})
+        self.risk.update({name: round((data['Log_ror'].std() * 250 ** 0.5) * 10, 1)})
+        if data['Log_ror'].count() < 250:
+            self.risk.update({name: 0})
         return data
 
     def beta_calc(self, nom):
@@ -131,29 +135,29 @@ class Analyse:
             delayed(self.make_xlsx)(name) for name, mnemonic in liste_complete()[1].items())
         for r in num:
             self.synoptique = self.synoptique.append({'Nom': r[0],
-                                                  'Prix': r[1],
-                                                  'Achat': r[2],
-                                                  'Vente': r[3],
-                                                  'Perf': r[4],
-                                                  '5 ans': r[5] if r[5] != None else 'N/A',
-                                                  '3 ans': r[6] if r[6] != None else 'N/A',
-                                                  '1er janv': r[7] if r[7] != None else 'N/A',
-                                                  'Moy/ans': r[8],
-                                                  'Mois': r[9],
-                                                  'Semaine': r[10],
-                                                  'Séance': r[11],
-                                                  'Rôle': 'Offensif' if r[12] > 0.75 else 'Défensif',
-                                                  'Secteur': self.df.loc[self.df['Nom'] == r[0]]['Secteur'].iloc[
-                                                      0] if len(self.df.loc[self.df['Nom'] == r[0]][
-                                                                    'Secteur'].values) > 0 else '',
-                                                  'Activité':
-                                                      self.df.loc[self.df['Nom'] == r[0]]['Activité'].iloc[
+                                                      'Prix': r[1],
+                                                      'Achat': r[2],
+                                                      'Vente': r[3],
+                                                      'Perf': r[4],
+                                                      '5 ans': r[5] if r[5] != None else 'N/A',
+                                                      '3 ans': r[6] if r[6] != None else 'N/A',
+                                                      '1er janv': r[7] if r[7] != None else 'N/A',
+                                                      'Moy/ans': r[8],
+                                                      'Mois': r[9],
+                                                      'Semaine': r[10],
+                                                      'Séance': r[11],
+                                                      'Rôle': 'Offensif' if r[12] > 0.75 else 'Défensif',
+                                                      'Secteur': self.df.loc[self.df['Nom'] == r[0]]['Secteur'].iloc[
                                                           0] if len(self.df.loc[self.df['Nom'] == r[0]][
-                                                                        'Activité'].values) > 0 else '',
-                                                  'Cac 40': r[13]  # ,
-                                                  # 'Avis': '⇗' if (
-                                                  #        self.predicted.get(name).get('5') == True) else '⇘'
-                                                  }, ignore_index=True)
+                                                                        'Secteur'].values) > 0 else '',
+                                                      'Activité':
+                                                          self.df.loc[self.df['Nom'] == r[0]]['Activité'].iloc[
+                                                              0] if len(self.df.loc[self.df['Nom'] == r[0]][
+                                                                            'Activité'].values) > 0 else '',
+                                                      'Cac 40': r[13]  # ,
+                                                      # 'Avis': '⇗' if (
+                                                      #        self.predicted.get(name).get('5') == True) else '⇘'
+                                                      }, ignore_index=True)
 
         self.synoptique['Nom'] = self.synoptique['Nom'].astype('str')
         self.synoptique['Achat'] = self.synoptique['Achat'].astype('str')
@@ -245,22 +249,22 @@ class Analyse:
         data = self.perf_du_dernier_jour(data, name)
         self.beta_calc(name)
         r = [name,
-          float(self.price[name]),
-          pd.to_datetime(data.index[0]).date(),
-          pd.to_datetime(data.index[-1]).date(),
-          float(self.avg[name] / 100),
-          float(self.avg5[name] / 100) if self.avg5[
-                                                      name] is not None else 'N/A',
-          float(self.avg3[name] / 100) if self.avg3[
-                                                      name] is not None else 'N/A',
-          float(self.avg1[name] / 100) if self.avg1[
-                                                      name] is not None else 'N/A',
-          float(self.avg_a_log[name] / 100),
-          float(self.avg25j[name] / 100),
-          float(self.avg5j[name] / 100),
-          float(self.perf_shot[name] / 100),
-          float(
-             self.dictionnaire_beta[name]['CAC 40']),
-          float(self.avg_cac40[name] / 100)]
+             float(self.price[name]),
+             pd.to_datetime(data.index[0]).date(),
+             pd.to_datetime(data.index[-1]).date(),
+             float(self.avg[name] / 100),
+             float(self.avg5[name] / 100) if self.avg5[
+                                                 name] is not None else 'N/A',
+             float(self.avg3[name] / 100) if self.avg3[
+                                                 name] is not None else 'N/A',
+             float(self.avg1[name] / 100) if self.avg1[
+                                                 name] is not None else 'N/A',
+             float(self.avg_a_log[name] / 100),
+             float(self.avg25j[name] / 100),
+             float(self.avg5j[name] / 100),
+             float(self.perf_shot[name] / 100),
+             float(
+                 self.dictionnaire_beta[name]['CAC 40']),
+             float(self.avg_cac40[name] / 100)]
 
         return r
