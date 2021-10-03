@@ -1,5 +1,6 @@
 import datetime
 import numpy as np
+import pandas as pd
 
 from objects.logger import log_init as log
 logger = log()
