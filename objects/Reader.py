@@ -49,6 +49,7 @@ class Reader:
 
         try:
             df = pd.read_sql_query("SELECT * FROM `" + self.table + suffix + "`", conn, index_col='date')
+            df = df.drop_duplicates()
             return df
 
         except (OperationalError, DatabaseError) as e:

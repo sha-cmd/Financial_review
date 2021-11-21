@@ -18,7 +18,7 @@ class DateGiver:
         if checker.is_in_db:
             self.conclusion: bool = np.datetime64(clock.last_day) > np.datetime64(checker.date_end)
             if self.conclusion:
-                self.from_date = np.busday_offset(np.datetime64(checker.date_end), 2)
+                self.from_date = np.busday_offset(np.datetime64(checker.date_end), 1)
                 self.to_date = clock.last_day
         else:
             self.from_date = DATE_DEBUT

@@ -1,7 +1,7 @@
 __all__ = ['db_conn', 'db_exist', 'logger', 'log_init',
            'connexion', 'write_to_db', 'close_connexion',
            'CreateTicket', 'DownloadTicket', 'Reader',
-           'Checker', 'Ticket', 'Dategiver']
+           'Checker', 'Ticket', 'DateGiver']
 
 from .db_conn import db_exist
 from .db_conn import connexion
@@ -14,4 +14,4 @@ from .DownloadTicket import DownloadTicket
 from .Reader import Reader
 from .Checker import Checker
 from .Ticket import Ticket
-from .Dategiver import Dategiver
+from .DateGiver import DateGiver

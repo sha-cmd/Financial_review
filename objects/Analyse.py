@@ -1,7 +1,11 @@
 import copy
 import numpy as np
 import pandas as pd
+import requests
+import re
 
+from urllib.parse import urlparse, urljoin
+from bs4 import BeautifulSoup
 from data.securities import liste_actions_pme, liste_complete, liste_indices, liste_actions_pea
 from decimal import Decimal
 from objects.Clock import Clock
@@ -35,7 +39,7 @@ class Analyse:
         self.trans = {}
         self.df = pd.read_excel('tex/Strategie_PME.xlsx')
         col = ['Nom', 'Prix', 'Achat', 'Vente', 'Perf', 'Cac 40', '5 ans', '3 ans', '1er janv', 'Moy/ans', 'Mois',
-               'Semaine', 'Séance', 'Rôle', 'Secteur', 'Activité']
+               'Semaine', 'Séance', 'Avis', 'Prix 3 mois', 'Gain 3 mois', 'Rôle', 'Secteur', 'Activité']
 
         self.synoptique = pd.DataFrame(columns=col)
 
@@ -129,11 +133,42 @@ class Analyse:
         if data['Dis_ror'].count() > 250:
             fichier.write(f'moyenne annuelle suivi sommé       {self.avg_a_dis[name]:+5}%\n')
 
-    def to_xlsx(self):
+    def make_prediction(self, nom):
+        print(nom)
+        url = self.df.loc[self.df['Nom'] == nom]['Boursorama'].iloc[
+            0] if len(self.df.loc[self.df['Nom'] == nom][
+                          'Boursorama'].values) > 0 else ''
+        print(str(url)+'\n')
+        if (str(url) != '') & (str(url) is not None) & (str(url) != 'nan'):
+#            parsed_source = urlparse(url)
+            result = requests.get(url)
+            page = BeautifulSoup(result.text, 'html.parser')
+            prediction = page.find('div', "c-median-gauge__tooltip")
+            predict_price = ''
+            predict_gain = ''
+            c = True
+            for line in page.find_all('p'):
+                search = re.search('Objectif', line.text)
+                if search is not None:
+                    while c:
+                        res = line.text.replace('\n', '').split(' ')
+                        scores = [x for x in res if (x != '')]
+                        print(scores)
+                        predict_price = scores[6]
+                        predict_gain = scores[-1][:-1] if str.isnumeric(scores[-1][:-1].replace('.', '1')) else 0
+                        c = False
+            if prediction is not None:
+                return float(prediction.text), float(predict_price), float(predict_gain)/100
+            else:
+                return '', '', ''
+        else:
+            return '', '', ''
 
+    def to_xlsx(self):
         num = Parallel(n_jobs=8)(
             delayed(self.make_xlsx)(name) for name, mnemonic in liste_complete()[1].items())
         for r in num:
+            prediction, predict_price, predict_gain = self.make_prediction(r[0])
             self.synoptique = self.synoptique.append({'Nom': r[0],
                                                       'Prix': r[1],
                                                       'Achat': r[2],
@@ -154,9 +189,12 @@ class Analyse:
                                                           self.df.loc[self.df['Nom'] == r[0]]['Activité'].iloc[
                                                               0] if len(self.df.loc[self.df['Nom'] == r[0]][
                                                                             'Activité'].values) > 0 else '',
-                                                      'Cac 40': r[13]  # ,
+                                                      'Cac 40': r[13],  # ,
                                                       # 'Avis': '⇗' if (
                                                       #        self.predicted.get(name).get('5') == True) else '⇘'
+                                                      'Avis': prediction,
+                                                      'Prix 3 mois': predict_price,
+                                                      'Gain 3 mois': predict_gain
                                                       }, ignore_index=True)
 
         self.synoptique['Nom'] = self.synoptique['Nom'].astype('str')
@@ -211,12 +249,18 @@ class Analyse:
         worksheet.set_column('M:M', 9, format2)
         # Perf du Jour
         worksheet.set_column('N:N', 9, format2)
-        # Tendance
-        worksheet.set_column('O:O', 9, format0)
+        # Avis
+        worksheet.set_column('O:O', 9)
+        # Prix 3 mois
+        worksheet.set_column('P:P', 9, format1)
+        # Gain 3 mois
+        worksheet.set_column('Q:Q', 9, format2)
         # Rôle
-        worksheet.set_column('P:P', 9, format0)
+        worksheet.set_column('R:R', 9, format0)
         # Secteur
-        worksheet.set_column('Q:Q', 19)
+        worksheet.set_column('S:S', 9)
+        # Activité
+        worksheet.set_column('T:T', 19)
         worksheet.conditional_format('C2:C600', {'type': '3_color_scale'})
         worksheet.conditional_format('E2:E600', {'type': 'data_bar'})
         worksheet.conditional_format('F2:F600', {'type': 'data_bar'})
@@ -229,14 +273,17 @@ class Analyse:
         worksheet.conditional_format('M2:M600', {'type': 'data_bar'})
 
         worksheet.conditional_format('N2:N600', {'type': 'data_bar'})
+        worksheet.conditional_format('O2:O600', {'type': 'data_bar'})
+        worksheet.conditional_format('P2:P600', {'type': 'data_bar'})
+        worksheet.conditional_format('Q2:Q600', {'type': 'data_bar'})
 
-        worksheet.conditional_format('O2:O600',
-                                     {'type': 'text', 'criteria': 'containing', 'value': '⇗', 'format': format3})
-        worksheet.conditional_format('O2:O600',
-                                     {'type': 'text', 'criteria': 'containing', 'value': '⇘', 'format': format4})
-        worksheet.conditional_format('O2:P600',
+       # worksheet.conditional_format('R2:R600',
+       #                              {'type': 'text', 'criteria': 'containing', 'value': '⇗', 'format': format3})
+       # worksheet.conditional_format('S2:S600',
+       #                              {'type': 'text', 'criteria': 'containing', 'value': '⇘', 'format': format4})
+        worksheet.conditional_format('R2:R600',
                                      {'type': 'text', 'criteria': 'containing', 'value': 'Offensif', 'format': format3})
-        worksheet.conditional_format('O2:P600',
+        worksheet.conditional_format('R2:R600',
                                      {'type': 'text', 'criteria': 'containing', 'value': 'Défensif', 'format': format4})
         c = Clock()
         worksheet.write(0, 0, c.date)

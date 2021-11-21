@@ -144,10 +144,10 @@ class Report:
                 #     print(value)
                 #     if self.noms[nom][0] == secteur:
                 #         noms.append(nom)
-                noms = [x for x in self.df.loc[self.df['Secteur'] == secteur]['Nom'].values.ravel()]
+                noms = [x for x in liste_complete()[1] if x in self.df.loc[self.df['Secteur'] == secteur]['Nom'].values.ravel()]
                 # if not secteur == 'Indice':
                 fout.write(CHAPITRE.replace('TITRE', str(secteur)))
-                for name in liste_complete()[1]:
+                for name in noms:
 
                     fout.write(CORPSSECTION.replace('TITRE', name))
                     try:

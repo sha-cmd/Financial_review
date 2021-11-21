@@ -59,11 +59,12 @@ START = r"""% LaTeX Cookbook, Packt Publishing, 2015
 \maketitle
 %\mainmatter
 \pagenumbering{arabic}
+\setcounter{secnumdepth}{-1}
 \tableofcontents
 """
-CHAPITRE = """\chapter{TITRE}
+CHAPITRE = r"""\chapter{TITRE}
 """
-END = """
+END = r"""
         
         \end{document}"""
 CORPSSECTION = r"""
