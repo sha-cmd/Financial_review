@@ -14,7 +14,7 @@ class FetchAndSave:
     def __init__(self, name):
         t = Ticket(name)
         self.downloader = Downloader(t)
-        self.sharpen()
+        # self.sharpen()
         Writer(self.downloader)
 
     @staticmethod
