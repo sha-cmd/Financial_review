@@ -114,7 +114,7 @@ class Analyse:
 
     def to_txt(self):
         fichier = open("reports_txt/performance_du_jour.txt", "w")
-        Parallel(n_jobs=4)(delayed(self.make_txt)(name, fichier) for name, mnemonic in self.list_of_stocks.items())
+        Parallel(n_jobs=-1)(delayed(self.make_txt)(name, fichier) for name, mnemonic in self.list_of_stocks.items())
 
         fichier.close()
 
@@ -165,7 +165,7 @@ class Analyse:
             return '', '', ''
 
     def to_xlsx(self):
-        num = Parallel(n_jobs=8)(
+        num = Parallel(n_jobs=-1)(
             delayed(self.make_xlsx)(name) for name, mnemonic in liste_complete()[1].items())
         for r in num:
             prediction, predict_price, predict_gain = self.make_prediction(r[0])
