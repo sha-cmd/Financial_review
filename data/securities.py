@@ -276,6 +276,24 @@ def print_actions_pme(actions_pme):
     return str_describe
 
 
+def liste_cryptomonnaies():
+    actions = ['Cryptomonnaies', {
+        'Bitcoin EUR': 'BTC-EUR',
+        'Ethereum EUR': 'ETH-EUR'
+    }]
+    return actions
+
+
+def print_cryptomonnaies(cryptomonnaies):
+    if cryptomonnaies[0] == 'Crypto_assets':
+        str_describe = "Liste de cryptomonnaies\n"
+        for key, value in cryptomonnaies[1].items():
+            str_describe += key + '\n'
+    else:
+        return "Ne sont pas des cryptomonnaies !"
+    return str_describe
+
+
 def liste_actions_usa():
     actions = ['Actions_usa', {
         'Microsoft': 'MSFT'
@@ -371,4 +389,5 @@ def liste_complete():
     dict_complete.update(liste_actions_pea()[1])
     dict_complete.update(liste_actions_cic()[1])
     dict_complete.update(liste_actions_usa()[1])
+    dict_complete.update(liste_cryptomonnaies()[1])
     return ['Liste_complete', dict_complete]
