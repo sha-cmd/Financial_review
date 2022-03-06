@@ -8,11 +8,11 @@ Ce programme analyse et crée un rapport financier
 # from data import listes
 # import weakref
 from data.securities import liste_complete
-# import memory_profiler
 import time
 import matplotlib.pyplot as plt
 import mplfinance as mpf
 import seaborn as sns
+from glob import glob
 from scipy import stats
 import pandas as pd
 import numpy as np
@@ -93,31 +93,42 @@ class Report:
         self.df = pd.read_excel('tex/Strategie_PME.xlsx')
         self.secteurs = pd.unique(self.df['Secteur'])
         # self.noms = {nom._nom: self.data.df.loc[self.data.df['Nom'] == nom._nom]['Secteur'].values for nom in
-        #             self.data._portefeuille._liste_valeurs}
+        #             self.data.list_of_stocks._liste_valeurs}
 
     def plot(self):
         # self.graph_pme('TRANSGENE')
-        #Parallel(n_jobs=8)(
-        #    delayed(self.graph_pme)(name) for name, mnemonic in liste_complete()[1].items())
+        Parallel(n_jobs=8)(
+            delayed(self.graph)(name) for name, mnemonic in liste_complete()[1].items())
         # self.graph_fonds()
-        # Parallel(n_jobs=8)(
-        #    delayed(self.graph_fonds)(name) for name, mnemonic in liste_complete()[1].items())
-        # self.graph_indices()
-        # self.graph_bitcoins()
-        # self.graph_pea_vol()
-        # self.graph_pea_quant()
-        # self.graph_pea_cours()
-        # self.sim_pea()
         #Parallel(n_jobs=8)(
-         #   delayed(self.sim_pme)(name) for name, mnemonic in liste_complete()[1].items())
-        # for name, mnemonic in liste_complete()[1].items():
+        #    delayed(self.graph_fonds)(name) for name, mnemonic in liste_complete()[1].items())
+        #Parallel(n_jobs=8)(
+        #    delayed(self.graph_indices)(name) for name, mnemonic in liste_complete()[1].items())
+        #Parallel(n_jobs=8)(
+        #    delayed(self.graph_bitcoins)(name) for name, mnemonic in liste_complete()[1].items())
+        #Parallel(n_jobs=8)(
+        #    delayed(self.graph_pea_vol)(name) for name, mnemonic in liste_complete()[1].items())
+        #Parallel(n_jobs=8)(
+        #    delayed(self.graph_pea_quant)(name) for name, mnemonic in liste_complete()[1].items())
+        #Parallel(n_jobs=8)(
+        #    delayed(self.graph_pea_cours)(name) for name, mnemonic in liste_complete()[1].items())
+        #self.graph_indices()
+        #self.graph_bitcoins()
+        #self.graph_pea_vol()
+        #self.graph_pea_quant()
+        #self.graph_pea_cours()
+        #self.sim_pea()
+        Parallel(n_jobs=8)(
+           delayed(self.sim_monte_carlo)(name) for name, mnemonic in liste_complete()[1].items())
+        #for name, mnemonic in liste_complete()[1].items():
         #    self.sim_pea(name)
 
-        Parallel(n_jobs=8)(
-            delayed(self.sim_pea)(name) for name, mnemonic in liste_complete()[1].items())
+        #Parallel(n_jobs=8)(
+        #    delayed(self.sim_pea)(name) for name, mnemonic in liste_complete()[1].items())
         # self.sim_fonds()
         # self.sim_indices()
         # self.sim_bitcoins()
+        pass
 
     def compiler(self):
         os.chdir("reports_pdf")
@@ -127,6 +138,10 @@ class Report:
 
     def create(self):  # (filename, noms, synthese, titre_chapitre, strategie):
         # os.chdir("reports_pdf")
+        if os.path.isfile("reports_pdf/" + str(Clock().date.date()) + '.tex'):
+            files_to_erase = glob("reports_pdf/" + str(Clock().date.date()) + '*')
+            for file in files_to_erase:
+                os.remove(file)
         with open("reports_pdf/" + str(Clock().date.date()) + '.tex', 'w', encoding='utf8') as fout:
             fout.write(START.replace('DATE', str(Clock().date.date())))
 
@@ -211,12 +226,11 @@ class Report:
 
     def graph_pea_vol(self):
         print('Graphiques Vol')
-        for nom, objet in self.data._portefeuille._actions_pea.items():
-            m1 = memory_profiler.memory_usage()
+        for nom, objet in self.data.list_of_stocks['Actions_pea'].items():
             t1 = time.perf_counter()
             print('PEA', nom)
 
-            methode = 'Adj Close'
+            methode = 'close'
             data = objet._donnees._panel[~objet._donnees._panel.index.duplicated()]
 
             # Volatility plot
@@ -236,21 +250,21 @@ class Report:
             # del df_filled, df_returns, df_std, data
             # gc.collect()
             t2 = time.perf_counter()
-            m2 = memory_profiler.memory_usage()
+            #m2 = memory_profiler.memory_usage()
             time_diff = t2 - t1
-            mem_diff = m2[0] - m1[0]
-            print(f"It took {time_diff} Secs and {mem_diff} Mb to execute this pea vol method")
+            #mem_diff = m2[0] - m1[0]
+            print(f"It took {time_diff} Secs")#and {mem_diff} Mb to execute this pea vol method")
 
     def graph_pea_quant(self):
         print('Graphiques Quant')
-        for nom, objet in self.data._portefeuille._actions_pea.items():
-            m1 = memory_profiler.memory_usage()
+        for nom, objet in self.data.list_of_stocks['Actions_pea'].items():
+            #m1 = memory_profiler.memory_usage()
             t1 = time.perf_counter()
 
             print('PEA quant : ', nom)
 
             # The top plot consisting of daily closing prices
-            methode = 'Adj Close'
+            methode = 'close'
             data = objet._donnees._panel
 
             # Quantile-quantile plot
@@ -267,37 +281,34 @@ class Report:
             # del figure, ax, data
             # gc.collect()
             t2 = time.perf_counter()
-            m2 = memory_profiler.memory_usage()
+            #m2 = memory_profiler.memory_usage()
             time_diff = t2 - t1
-            mem_diff = m2[0] - m1[0]
-            print(f"It took {time_diff} Secs and {mem_diff} Mb to execute this pea quant method")
+            #mem_diff = m2[0] - m1[0]
+            print(f"It took {time_diff} Secs")  # and {mem_diff} Mb to execute this pea quant method")
 
     def graph_pea_cours(self):
         print('Graphiques Cours')
-        valeurs_iter = iter(self.data._portefeuille.pea_iter())
 
-        for i in range(0, len(self.data._portefeuille._liste_pea)):
-            objet = next(valeurs_iter)
-            # for nom, objet in self.data._portefeuille._actions_pea.items():
-            print('PEA cours: ', objet._nom)
+        for nom, objet in self.data.list_of_stocks['Actions_pea'].items():
+            print('PEA cours: ', nom)
 
-            m1 = memory_profiler.memory_usage()
+            #m1 = memory_profiler.memory_usage()
             t1 = time.perf_counter()
             p = PlotFinance()
-            p.calc(objet._donnees._panel, objet._nom, 'Adj Close')
+            p.calc(objet._donnees._panel, objet._nom, 'close')
             t2 = time.perf_counter()
-            m2 = memory_profiler.memory_usage()
+           # m2 = memory_profiler.memory_usage()
             time_diff = t2 - t1
-            mem_diff = m2[0] - m1[0]
-            print(f"It took {time_diff} Secs and {mem_diff} Mb to execute this entire method")
+           # mem_diff = m2[0] - m1[0]
+            print(f"It took {time_diff} Secs") # and {mem_diff} Mb to execute this entire method")
             gc.collect()
         return 0
 
-    def graph_pme(self, nom):
-        # for nom, objet in self.data._portefeuille._actions_pme.items():
+    def graph(self, nom):
+        #for nom, objet in self.data.list_of_stocks['Actions_pme'].items():
         print('PME', nom)
         # if isinstance(objet, Fonds):
-        #     methode = 'Adj Close'
+        #     methode = 'close'
         #     # Plot the stock price
         #     data = objet._donnees._panel
 
@@ -311,7 +322,7 @@ class Report:
                  , savefig='OutputFiles/mva_' + methode + '_' + nom + '.png')
         #     del data
         # if isinstance(objet, Indice):
-        #     methode = 'Adj Close'
+        #     methode = 'close'
         #     # Plot the stock price
         #     data = objet._donnees._panel
         #     plt.figure(figsize=(10,6))
@@ -362,19 +373,19 @@ class Report:
         plt.clf()
         plt.close()
         # mva plot data = data.iloc[:,0:5]
-        mpf.plot(data.iloc[:, 0:5], type='line', volume=True, title='Cours de l\'action ' + nom
-                 , savefig='OutputFiles/stockprice_' + methode + '_' + nom + '.png')
-        mpf.plot(data.iloc[-500:, 0:5], type='line', mav=(12, 20, 50), volume=True, title='Cours de l\'action ' + nom
-                 , savefig='OutputFiles/mva_' + methode + '_' + nom + '.png')
-        plt.clf()
-        plt.close()
+        #mpf.plot(data.iloc[:, 0:5], type='line', volume=True, title='Cours de l\'action ' + nom
+         #        , savefig='OutputFiles/stockprice_' + methode + '_' + nom + '.png')
+        #mpf.plot(data.iloc[-500:, 0:5], type='line', mav=(12, 20, 50), volume=True, title='Cours de l\'action ' + nom
+        #         , savefig='OutputFiles/mva_' + methode + '_' + nom + '.png')
+        #plt.clf()
+        #plt.close()
 
-        # valeurs_iter = iter(self.data._portefeuille.pea_iter())
+        # valeurs_iter = iter(self.data.list_of_stocks.pea_iter())
 
         # m1 = memory_profiler.memory_usage()
         # t1 = time.perf_counter()
-        p = PlotFinance()
-        p.calc(Reader(Ticket(nom)).read(), nom, methode)
+        # p = PlotFinance()
+        # p.calc(Reader(Ticket(nom)).read(), nom, methode)
         # t2 = time.perf_counter()
         # m2 = memory_profiler.memory_usage()
         # time_diff = t2 - t1
@@ -389,7 +400,7 @@ class Report:
         # gc.collect()
 
     def graph_fonds(self, nom):
-        # for nom, objet in self.data._portefeuille._titres_fonds.items():
+#        for nom, objet in self.data.list_of_stocks['Actions_cic'].items():
         print('Fonds', nom)
 
         # The top plot consisting of daily closing prices
@@ -422,132 +433,134 @@ class Report:
         ax = ''
         plt.clf()
         plt.close()
-        m1 = memory_profiler.memory_usage()
+        #m1 = memory_profiler.memory_usage()
         t1 = time.perf_counter()
-        p = PlotFinance()
-        p.calc(objet._donnees._panel, objet._nom, 'Adj Close')
+        # p = PlotFinance()
+        # p.calc(objet._donnees._panel, objet._nom, 'close')
         t2 = time.perf_counter()
-        m2 = memory_profiler.memory_usage()
+        #m2 = memory_profiler.memory_usage()
         time_diff = t2 - t1
-        mem_diff = m2[0] - m1[0]
-        print(f"It took {time_diff} Secs and {mem_diff} Mb to execute this fonds cic entire method")
+        #mem_diff = m2[0] - m1[0]
+        print(f"It took {time_diff} Secs")  # and {mem_diff} Mb to execute this fonds cic entire method")
 
         del data
         data = ''
         del df_filled, df_returns, df_std, figure, ax, data
         gc.collect()
 
-    def graph_indices(self):
-        for nom, objet in self.data._portefeuille._titres_indices.items():
-            print('Indices', nom)
+    def graph_indices(self, nom):
+        # for nom, objet in self.data.list_of_stocks['Indices'].items():
+        print('Indices', nom)
 
-            # The top plot consisting of daily closing prices
-            methode = 'Adj Close'
+        # The top plot consisting of daily closing prices
+        methode = 'close'
 
-            data = objet._donnees._panel[~objet._donnees._panel.index.duplicated()]
+        data = Reader(Ticket(nom)).read()
+        #data = objet._donnees._panel[~objet._donnees._panel.index.duplicated()]
 
-            # Volatility plot
-            df_filled = data[[methode]].asfreq('D', method='ffill')
-            df_returns = df_filled.pct_change()
-            df_std = df_returns[-500:].rolling(window=30, min_periods=30).std()
-            df_std.plot(label='Volatilité à la Clôture');
-            plt.savefig('OutputFiles/volatility_' + methode + '_' + nom + '.png')
-            del df_filled, df_returns, df_std
-            df_filled = ''
-            df_returns = ''
-            df_std = ''
-            plt.clf()
-            plt.close()
-            # Quantile-quantile plot
-            figure = plt.figure(figsize=(8, 4))
-            ax = figure.add_subplot(111)
-            stats.probplot(data[-500:][methode].pct_change(periods=1).dropna(), dist='norm', plot=ax)
-            # plt.show();
-            plt.savefig('OutputFiles/quantile_' + methode + '_' + nom + '.png')
-            # figur.clear()
-            del figure, ax
-            figure = ''
-            ax = ''
-            plt.clf()
-            plt.close()
-            plt.close()
+        # Volatility plot
+        df_filled = data[[methode]].asfreq('D', method='ffill')
+        df_returns = df_filled.pct_change()
+        df_std = df_returns[-500:].rolling(window=30, min_periods=30).std()
+        df_std.plot(label='Volatilité à la Clôture');
+        plt.savefig('OutputFiles/volatility_' + methode + '_' + nom + '.png')
+        del df_filled, df_returns, df_std
+        df_filled = ''
+        df_returns = ''
+        df_std = ''
+        plt.clf()
+        plt.close()
+        # Quantile-quantile plot
+        figure = plt.figure(figsize=(8, 4))
+        ax = figure.add_subplot(111)
+        stats.probplot(data[-500:][methode].pct_change(periods=1).dropna(), dist='norm', plot=ax)
+        # plt.show();
+        plt.savefig('OutputFiles/quantile_' + methode + '_' + nom + '.png')
+        # figur.clear()
+        del figure, ax
+        figure = ''
+        ax = ''
+        plt.clf()
+        plt.close()
+        plt.close()
 
-            m1 = memory_profiler.memory_usage()
-            t1 = time.perf_counter()
-            p = PlotFinance()
-            p.calc(objet._donnees._panel, objet._nom, 'Adj Close')
-            t2 = time.perf_counter()
-            m2 = memory_profiler.memory_usage()
-            time_diff = t2 - t1
-            mem_diff = m2[0] - m1[0]
-            print(f"It took {time_diff} Secs and {mem_diff} Mb to execute this indices entire method")
+        #m1 = memory_profiler.memory_usage()
+        t1 = time.perf_counter()
+        #p = PlotFinance()
+        #p.calc(objet._donnees._panel, objet._nom, 'close')
+        t2 = time.perf_counter()
+        #m2 = memory_profiler.memory_usage()
+        time_diff = t2 - t1
+        #mem_diff = m2[0] - m1[0]
+        print(f"It took {time_diff} Secs")  # and {mem_diff} Mb to execute this indices entire method")
 
-            del data
-            data = ''
-            del df_filled, df_returns, df_std, figure, ax, data
-            gc.collect()
+        del data
+        data = ''
+        del df_filled, df_returns, df_std, figure, ax, data
+        gc.collect()
 
-    def graph_bitcoins(self):
-        for nom, objet in self.data._portefeuille._titres_bitcoins.items():
-            print('Bitcoins', nom)
+    def graph_bitcoins(self, nom):
+        #for nom, objet in self.data.list_of_stocks['Cryptomonnaies'].items():
+        print('Bitcoins', nom)
 
-            # The top plot consisting of daily closing prices
-            methode = 'Adj Close'
+        # The top plot consisting of daily closing prices
+        methode = 'close'
 
-            data = objet._donnees._panel[~objet._donnees._panel.index.duplicated()]
+        #data = objet._donnees._panel[~objet._donnees._panel.index.duplicated()]
+        data = Reader(Ticket(nom)).read()
 
-            # Volatility plot
-            data = data[~data.index.duplicated()]
-            # self.panel_filtre.update({nom:panel})
-            df_filled = data[[methode]].asfreq('D', method='ffill')
-            df_returns = df_filled.pct_change()
-            df_std = df_returns[-500:].rolling(window=30, min_periods=30).std()
-            df_std.plot(label='Volatilité à la Clôture');
-            plt.savefig('OutputFiles/volatility_' + methode + '_' + nom + '.png')
-            del df_filled, df_returns, df_std
-            df_filled = ''
-            df_returns = ''
-            df_std = ''
-            plt.clf()
-            plt.close()
-            # Quantile-quantile plot
-            figure = plt.figure(figsize=(8, 4))
-            ax = figure.add_subplot(111)
-            stats.probplot(data[-500:][methode].pct_change(periods=1).dropna(), dist='norm', plot=ax)
-            # plt.show();
-            plt.savefig('OutputFiles/quantile_' + methode + '_' + nom + '.png')
-            # figur.clear()
-            del figure, ax
-            figure = ''
-            ax = ''
-            plt.clf()
-            plt.close()
-            plt.close()
+        # Volatility plot
+        data = data[~data.index.duplicated()]
+        # self.panel_filtre.update({nom:panel})
+        df_filled = data[[methode]].asfreq('D', method='ffill')
+        df_returns = df_filled.pct_change()
+        df_std = df_returns[-500:].rolling(window=30, min_periods=30).std()
+        df_std.plot(label='Volatilité à la Clôture');
+        plt.savefig('OutputFiles/volatility_' + methode + '_' + nom + '.png')
+        del df_filled, df_returns, df_std
+        df_filled = ''
+        df_returns = ''
+        df_std = ''
+        plt.clf()
+        plt.close()
+        # Quantile-quantile plot
+        figure = plt.figure(figsize=(8, 4))
+        ax = figure.add_subplot(111)
+        stats.probplot(data[-500:][methode].pct_change(periods=1).dropna(), dist='norm', plot=ax)
+        # plt.show();
+        plt.savefig('OutputFiles/quantile_' + methode + '_' + nom + '.png')
+        # figur.clear()
+        del figure, ax
+        figure = ''
+        ax = ''
+        plt.clf()
+        plt.close()
+        plt.close()
 
-            m1 = memory_profiler.memory_usage()
-            t1 = time.perf_counter()
-            p = PlotFinance()
-            p.calc(objet._donnees._panel, objet._nom, 'Adj Close')
-            t2 = time.perf_counter()
-            m2 = memory_profiler.memory_usage()
-            time_diff = t2 - t1
-            mem_diff = m2[0] - m1[0]
-            print(f"It took {time_diff} Secs and {mem_diff} Mb to execute this bitcoin entire method")
-            plt.clf()
-            plt.close('all')
+        #m1 = memory_profiler.memory_usage()
+        t1 = time.perf_counter()
+        #p = PlotFinance()
+        #p.calc(objet._donnees._panel, objet._nom, 'close')
+        t2 = time.perf_counter()
+        #m2 = memory_profiler.memory_usage()
+        time_diff = t2 - t1
+        #mem_diff = m2[0] - m1[0]
+        print(f"It took {time_diff} Secs")  # and {mem_diff} Mb to execute this bitcoin entire method")
+        plt.clf()
+        plt.close('all')
 
-            del data
-            data = ''
-            del df_filled, df_returns, df_std, figure, ax, data
-            gc.collect()
+        del data
+        data = ''
+        del df_filled, df_returns, df_std, figure, ax, data
+        gc.collect()
 
     def sim_pea(self, nom):
-        # for nom, objet in self.data._portefeuille._actions_pea.items():
+        #for nom, objet in self.data.list_of_stocks['Actions_pea'].items():
         data = Reader(Ticket(nom)).read()
         data.index = pd.Index([pd.to_datetime(x) for x in data.index])
         methode = 'close'
         print('Simulation Monte Carlo', nom)
-        # methode = 'Adj Close'
+        # methode = 'close'
         # data = objet._donnees._panel[methode]
         # data = self.data[methode]
 
@@ -591,187 +604,192 @@ class Report:
         del price_list, log_returns, u, var, drift, stdev, daily_returns, data
         gc.collect()
 
-    def sim_pme(self, methode='close'):
-        for nom, objet in self.data._portefeuille._actions_pme.items():
-            print('Simulation Monte Carlo', nom)
-            # methode = 'Adj Close'
-            data = objet._donnees._panel[methode]
-            # data = self.data[methode]
+    def sim_monte_carlo(self, nom,  methode='close'):
+        #for nom, objet in self.data.list_of_stocks['Actions_pme'].items():
+        print('Simulation Monte Carlo', nom)
+        # methode = 'close'
 
-            log_returns = np.log(1 + data.pct_change())
-            u = log_returns.mean()
-            var = log_returns.var()
-            drift = pd.Series(u - (0.5 * var))
-            stdev = pd.Series(log_returns.std())
+        data = Reader(Ticket(nom)).read()[methode]
+        #data = objet._donnees._panel[methode]
+        # data = self.data[methode]
 
-            t_intervals = 250
-            iterations = 10
+        log_returns = np.log(1 + data.pct_change())
+        u = log_returns.mean()
+        var = log_returns.var()
+        drift = pd.Series(u - (0.5 * var))
+        stdev = pd.Series(log_returns.std())
 
-            daily_returns = np.exp(drift.values + stdev.values * norm.ppf(np.random.rand(t_intervals, iterations)))
-            ## À la place du prix S0, je prends 100
-            # S0 = data.iloc[-1]
-            price_list = np.zeros_like(daily_returns)
-            price_list[0] = 100
-            for t in range(1, t_intervals):
-                price_list[t] = price_list[t - 1] * daily_returns[t]
+        t_intervals = 250
+        iterations = 10
 
-            # Plot Monte-Carlo Simulation
-            plt.figure(figsize=(10, 6))
-            plt.xlabel('Jours')
-            plt.ylabel('Prix prévisionnel')
-            # plt.title('Méthode de Monte-Carlo')
-            plt.title(
-                'Méthode de Monte-Carlo (calculs d\'aléas sur les 250 jours de marché à venir) pour {}'.format(nom))
-            plt.plot(price_list);
-            plt.savefig('OutputFiles/monaco_' + methode + '_' + nom + '.png')
-            plt.clf()
-            plt.close()
-            del price_list, log_returns, u, var, drift, stdev, daily_returns, data
-            price_list = ''
-            log_returns = ''
-            u = ''
-            var = ''
-            drift = ''
-            stdev = ''
-            daily_returns = ''
-            data = ''
-            del price_list, log_returns, u, var, drift, stdev, daily_returns, data
-            gc.collect()
+        daily_returns = np.exp(drift.values + stdev.values * norm.ppf(np.random.rand(t_intervals, iterations)))
+        ## À la place du prix S0, je prends 100
+        # S0 = data.iloc[-1]
+        price_list = np.zeros_like(daily_returns)
+        price_list[0] = 100
+        for t in range(1, t_intervals):
+            price_list[t] = price_list[t - 1] * daily_returns[t]
 
-    def sim_fonds(self, methode='Adj Close'):
-        for nom, objet in self.data._portefeuille._titres_fonds.items():
-            print('Simulation Monte Carlo', nom)
-            # methode = 'Adj Close'
-            data = objet._donnees._panel[methode]
-            # data = self.data[methode]
+        # Plot Monte-Carlo Simulation
+        plt.figure(figsize=(10, 6))
+        plt.xlabel('Jours')
+        plt.ylabel('Prix prévisionnel')
+        # plt.title('Méthode de Monte-Carlo')
+        plt.title(
+            'Méthode de Monte-Carlo (calculs d\'aléas sur les 250 jours de marché à venir) pour {}'.format(nom))
+        plt.plot(price_list);
+        plt.savefig('OutputFiles/monaco_' + methode + '_' + nom + '.png')
+        plt.clf()
+        plt.close()
+        del price_list, log_returns, u, var, drift, stdev, daily_returns, data
+        price_list = ''
+        log_returns = ''
+        u = ''
+        var = ''
+        drift = ''
+        stdev = ''
+        daily_returns = ''
+        data = ''
+        del price_list, log_returns, u, var, drift, stdev, daily_returns, data
+        gc.collect()
 
-            log_returns = np.log(1 + data.pct_change())
-            u = log_returns.mean()
-            var = log_returns.var()
-            drift = pd.Series(u - (0.5 * var))
-            stdev = pd.Series(log_returns.std())
+    def sim_fonds(self, nom, methode='close'):
+        #for nom, objet in self.data.list_of_stocks['Actions_cic'].items():
+        print('Simulation Monte Carlo', nom)
+        # methode = 'close'
+        #data = objet._donnees._panel[methode]
+        data = Reader(Ticket(nom)).read()
+        # data = self.data[methode]
 
-            t_intervals = 250
-            iterations = 10
+        log_returns = np.log(1 + data.pct_change())
+        u = log_returns.mean()
+        var = log_returns.var()
+        drift = pd.Series(u - (0.5 * var))
+        stdev = pd.Series(log_returns.std())
 
-            daily_returns = np.exp(drift.values + stdev.values * norm.ppf(np.random.rand(t_intervals, iterations)))
-            ## À la place du prix S0, je prends 100
-            # S0 = data.iloc[-1]
-            price_list = np.zeros_like(daily_returns)
-            price_list[0] = 100
-            for t in range(1, t_intervals):
-                price_list[t] = price_list[t - 1] * daily_returns[t]
+        t_intervals = 250
+        iterations = 10
 
-            # Plot Monte-Carlo Simulation
-            plt.figure(figsize=(10, 6))
-            plt.xlabel('Jours')
-            plt.ylabel('Prix prévisionnel')
-            # plt.title('Méthode de Monte-Carlo')
-            plt.title(
-                'Méthode de Monte-Carlo (calculs d\'aléas sur les 250 jours de marché à venir) pour {}'.format(nom))
-            plt.plot(price_list);
-            plt.savefig('OutputFiles/monaco_' + methode + '_' + nom + '.png')
-            plt.clf()
-            plt.close()
-            del price_list, log_returns, u, var, drift, stdev, daily_returns, data
-            price_list = ''
-            log_returns = ''
-            u = ''
-            var = ''
-            drift = ''
-            stdev = ''
-            daily_returns = ''
-            data = ''
-            del price_list, log_returns, u, var, drift, stdev, daily_returns, data
-            gc.collect()
+        daily_returns = np.exp(drift.values + stdev.values * norm.ppf(np.random.rand(t_intervals, iterations)))
+        ## À la place du prix S0, je prends 100
+        # S0 = data.iloc[-1]
+        price_list = np.zeros_like(daily_returns)
+        price_list[0] = 100
+        for t in range(1, t_intervals):
+            price_list[t] = price_list[t - 1] * daily_returns[t]
 
-    def sim_indices(self, methode='Adj Close'):
-        for nom, objet in self.data._portefeuille._titres_indices.items():
-            print('Simulation Monte Carlo', nom)
-            # methode = 'Adj Close'
-            data = objet._donnees._panel[methode]
-            # data = self.data[methode]
+        # Plot Monte-Carlo Simulation
+        plt.figure(figsize=(10, 6))
+        plt.xlabel('Jours')
+        plt.ylabel('Prix prévisionnel')
+        # plt.title('Méthode de Monte-Carlo')
+        plt.title(
+            'Méthode de Monte-Carlo (calculs d\'aléas sur les 250 jours de marché à venir) pour {}'.format(nom))
+        plt.plot(price_list);
+        plt.savefig('OutputFiles/monaco_' + methode + '_' + nom + '.png')
+        plt.clf()
+        plt.close()
+        del price_list, log_returns, u, var, drift, stdev, daily_returns, data
+        price_list = ''
+        log_returns = ''
+        u = ''
+        var = ''
+        drift = ''
+        stdev = ''
+        daily_returns = ''
+        data = ''
+        del price_list, log_returns, u, var, drift, stdev, daily_returns, data
+        gc.collect()
 
-            log_returns = np.log(1 + data.pct_change())
-            u = log_returns.mean()
-            var = log_returns.var()
-            drift = pd.Series(u - (0.5 * var))
-            stdev = pd.Series(log_returns.std())
+    def sim_indices(self, nom, methode='close'):
+        #for nom, objet in self.data.list_of_stocks['Indices'].items():
+        print('Simulation Monte Carlo', nom)
+        # methode = 'close'
+        data = Reader(Ticket(nom)).read()
+        #data = objet._donnees._panel[methode]
+        # data = self.data[methode]
 
-            t_intervals = 250
-            iterations = 10
+        log_returns = np.log(1 + data.pct_change())
+        u = log_returns.mean()
+        var = log_returns.var()
+        drift = pd.Series(u - (0.5 * var))
+        stdev = pd.Series(log_returns.std())
 
-            daily_returns = np.exp(drift.values + stdev.values * norm.ppf(np.random.rand(t_intervals, iterations)))
+        t_intervals = 250
+        iterations = 10
 
-            price_list = np.zeros_like(daily_returns)
-            price_list[0] = 100
-            for t in range(1, t_intervals):
-                price_list[t] = price_list[t - 1] * daily_returns[t]
+        daily_returns = np.exp(drift.values + stdev.values * norm.ppf(np.random.rand(t_intervals, iterations)))
 
-            # Plot Monte-Carlo Simulation
-            plt.figure(figsize=(10, 6))
-            plt.xlabel('Jours')
-            plt.ylabel('Prix prévisionnel')
-            # plt.title('Méthode de Monte-Carlo')
-            plt.title(
-                'Méthode de Monte-Carlo (calculs d\'aléas sur les 250 jours de marché à venir) pour {}'.format(nom))
-            plt.plot(price_list);
-            plt.savefig('OutputFiles/monaco_' + methode + '_' + nom + '.png')
-            plt.clf()
-            plt.close()
-            del price_list, log_returns, u, var, drift, stdev, daily_returns, data
-            price_list = ''
-            log_returns = ''
-            u = ''
-            var = ''
-            drift = ''
-            stdev = ''
-            daily_returns = ''
-            data = ''
-            del price_list, log_returns, u, var, drift, stdev, daily_returns, data
-            gc.collect()
+        price_list = np.zeros_like(daily_returns)
+        price_list[0] = 100
+        for t in range(1, t_intervals):
+            price_list[t] = price_list[t - 1] * daily_returns[t]
 
-    def sim_bitcoins(self, methode='Adj Close'):
-        for nom, objet in self.data._portefeuille._titres_bitcoins.items():
-            print('Simulation Monte Carlo', nom)
-            # methode = 'Adj Close'
-            data = objet._donnees._panel[methode]
+        # Plot Monte-Carlo Simulation
+        plt.figure(figsize=(10, 6))
+        plt.xlabel('Jours')
+        plt.ylabel('Prix prévisionnel')
+        # plt.title('Méthode de Monte-Carlo')
+        plt.title(
+            'Méthode de Monte-Carlo (calculs d\'aléas sur les 250 jours de marché à venir) pour {}'.format(nom))
+        plt.plot(price_list);
+        plt.savefig('OutputFiles/monaco_' + methode + '_' + nom + '.png')
+        plt.clf()
+        plt.close()
+        del price_list, log_returns, u, var, drift, stdev, daily_returns, data
+        price_list = ''
+        log_returns = ''
+        u = ''
+        var = ''
+        drift = ''
+        stdev = ''
+        daily_returns = ''
+        data = ''
+        del price_list, log_returns, u, var, drift, stdev, daily_returns, data
+        gc.collect()
 
-            log_returns = np.log(1 + data.pct_change())
-            u = log_returns.mean()
-            var = log_returns.var()
-            drift = pd.Series(u - (0.5 * var))
-            stdev = pd.Series(log_returns.std())
+    def sim_bitcoins(self, nom, methode='close'):
+        #for nom, objet in self.data.list_of_stocks['Cryptomonnaies'].items():
+        print('Simulation Monte Carlo', nom)
+        # methode = 'close'
+        #data = objet._donnees._panel[methode]
 
-            t_intervals = 250
-            iterations = 10
+        data = Reader(Ticket(nom)).read()
+        log_returns = np.log(1 + data.pct_change())
+        u = log_returns.mean()
+        var = log_returns.var()
+        drift = pd.Series(u - (0.5 * var))
+        stdev = pd.Series(log_returns.std())
 
-            daily_returns = np.exp(drift.values + stdev.values * norm.ppf(np.random.rand(t_intervals, iterations)))
+        t_intervals = 250
+        iterations = 10
 
-            price_list = np.zeros_like(daily_returns)
-            price_list[0] = 100
-            for t in range(1, t_intervals):
-                price_list[t] = price_list[t - 1] * daily_returns[t]
+        daily_returns = np.exp(drift.values + stdev.values * norm.ppf(np.random.rand(t_intervals, iterations)))
 
-            # Plot Monte-Carlo Simulation
-            plt.figure(figsize=(10, 6))
-            plt.xlabel('Jours')
-            plt.ylabel('Prix prévisionnel')
-            # plt.title('Méthode de Monte-Carlo')
-            plt.title(
-                'Méthode de Monte-Carlo (calculs d\'aléas sur les 250 jours de marché à venir) pour {}'.format(nom))
-            plt.plot(price_list);
-            plt.savefig('OutputFiles/monaco_' + methode + '_' + nom + '.png')
-            plt.clf()
-            plt.close()
-            del price_list, log_returns, u, var, drift, stdev, daily_returns, data
-            price_list = ''
-            log_returns = ''
-            u = ''
-            var = ''
-            drift = ''
-            stdev = ''
-            daily_returns = ''
-            data = ''
-            del price_list, log_returns, u, var, drift, stdev, daily_returns, data
-            gc.collect()
+        price_list = np.zeros_like(daily_returns)
+        price_list[0] = 100
+        for t in range(1, t_intervals):
+            price_list[t] = price_list[t - 1] * daily_returns[t]
+
+        # Plot Monte-Carlo Simulation
+        plt.figure(figsize=(10, 6))
+        plt.xlabel('Jours')
+        plt.ylabel('Prix prévisionnel')
+        # plt.title('Méthode de Monte-Carlo')
+        plt.title(
+            'Méthode de Monte-Carlo (calculs d\'aléas sur les 250 jours de marché à venir) pour {}'.format(nom))
+        plt.plot(price_list);
+        plt.savefig('OutputFiles/monaco_' + methode + '_' + nom + '.png')
+        plt.clf()
+        plt.close()
+        del price_list, log_returns, u, var, drift, stdev, daily_returns, data
+        price_list = ''
+        log_returns = ''
+        u = ''
+        var = ''
+        drift = ''
+        stdev = ''
+        daily_returns = ''
+        data = ''
+        del price_list, log_returns, u, var, drift, stdev, daily_returns, data
+        gc.collect()
