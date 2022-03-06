@@ -26,4 +26,4 @@ class FetchAndSave:
 
             if not c.is_in_db:
                 FetchAndSave(name)
-                print(t.name_table + " télécharger et sauvegarder")
+                print(t.name_table + " téléchargée et sauvegardée")
