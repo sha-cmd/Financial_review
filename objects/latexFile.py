@@ -84,24 +84,74 @@ CORPS = r"""
    \begin{minipage}{0.5\textwidth}
      \centering
      \includegraphics[width=.8\linewidth]{stockprice_close_TITRE.png}
-     \caption{Cours et Volumes}\label{Fig:price_TITRE}
+     \caption{Cours et Volumes}\label{Fig:stockprice_close_TITRE}
    \end{minipage}\hfill
    \begin{minipage}{0.5\textwidth}
      \centering
-     \includegraphics[width=.8\linewidth]{volatility_close_TITRE.png}
-     \caption{Volatilité à 30 jours}\label{Fig:volat_TITRE}
+     \includegraphics[width=.8\linewidth]{volatility_30_close_TITRE.png}
+     \caption{Volatilité à 30 jours}\label{Fig:volatility_30_close_TITRE}
    \end{minipage}
 \end{figure}
 \begin{figure}[!htb]
    \begin{minipage}{0.5\textwidth}
      \centering
      \includegraphics[width=.8\linewidth]{mva_close_TITRE.png}
-     \caption{Moyennes mobiles}\label{Fig:mva_TITRE}
+     \caption{Moyennes mobiles}\label{Fig:mva_close_TITRE}
    \end{minipage}\hfill
    \begin{minipage}{0.5\textwidth}
      \centering
      \includegraphics[width=.8\linewidth]{monaco_close_TITRE.png}
-     \caption{Validité de prédiction}\label{Fig:prediction_TITRE}
+     \caption{Simulation Monte-Carlo}\label{Fig:monaco_close_TITRE}
+   \end{minipage}
+\end{figure}
+\newpage
+\begin{figure}[!htb]
+   \begin{minipage}{0.5\textwidth}
+     \centering
+     \includegraphics[width=.8\linewidth]{quantile_close_TITRE.png}
+     \caption{Quantile}\label{Fig:quantile_close_TITRE}
+   \end{minipage}\hfill
+   \begin{minipage}{0.5\textwidth}
+     \centering
+     \includegraphics[width=.8\linewidth]{volatility_15_close_TITRE.png}
+     \caption{Volatilité à 15 jours}\label{Fig:volatility_15_close_TITRE}
+   \end{minipage}
+\end{figure}
+\begin{figure}[!htb]
+   \begin{minipage}{0.5\textwidth}
+     \centering
+     \includegraphics[width=.8\linewidth]{volatility_7_close_TITRE.png}
+     \caption{Volatilité à 7 jours}\label{Fig:volatility_7_close_TITRE}
+   \end{minipage}\hfill
+   \begin{minipage}{0.5\textwidth}
+     \centering
+     \includegraphics[width=.8\linewidth]{volatility_3_close_TITRE.png}
+     \caption{Volatilité à 3 jours}\label{Fig:volatility_3_close_TITRE}
+   \end{minipage}
+\end{figure}
+\newpage
+\begin{figure}[!htb]
+   \begin{minipage}{0.5\textwidth}
+     \centering
+     \includegraphics[width=.8\linewidth]{volat_volub_30_close_TITRE.png}
+     \caption{Volume volatilité à 30 jours}\label{Fig:volat_volub_30_close_TITRE}
+   \end{minipage}\hfill
+   \begin{minipage}{0.5\textwidth}
+     \centering
+     \includegraphics[width=.8\linewidth]{volat_volub_15_close_TITRE.png}
+     \caption{Volume volatilité à 15 jours}\label{Fig:volat_volub_15_close_TITRE}
+   \end{minipage}
+\end{figure}
+\begin{figure}[!htb]
+   \begin{minipage}{0.5\textwidth}
+     \centering
+     \includegraphics[width=.8\linewidth]{volat_volub_7_close_TITRE.png}
+     \caption{Volume volatilité à 7 jours}\label{Fig:volat_volub_7_close_TITRE}
+   \end{minipage}\hfill
+   \begin{minipage}{0.5\textwidth}
+     \centering
+     \includegraphics[width=.8\linewidth]{volat_volub_3_close_TITRE.png}
+     \caption{Volume volatilité à 3 jours}\label{Fig:volat_volub_3_close_TITRE}
    \end{minipage}
 \end{figure}
 """
