@@ -46,34 +46,34 @@ class Report:
         self.secteurs = pd.unique(self.df['Secteur'])
 
     def plot(self):
-        Parallel(n_jobs=8)(
+        Parallel(n_jobs=-1)(
             delayed(self.graph_01)(name) for name, mnemonic in liste_complete()[1].items())
-        Parallel(n_jobs=8)(
+        Parallel(n_jobs=-1)(
             delayed(self.graph_02)(name) for name, mnemonic in liste_complete()[1].items())
-        Parallel(n_jobs=8)(
+        Parallel(n_jobs=-1)(
             delayed(self.graph_03)(name) for name, mnemonic in liste_complete()[1].items())
-        Parallel(n_jobs=8)(
+        Parallel(n_jobs=-1)(
             delayed(self.graph_04)(name) for name, mnemonic in liste_complete()[1].items())
-        Parallel(n_jobs=8)(
+        Parallel(n_jobs=-1)(
             delayed(self.graph_05)(name) for name, mnemonic in liste_complete()[1].items())
 
-        Parallel(n_jobs=8)(
+        Parallel(n_jobs=-1)(
             delayed(self.graph_06)(name) for name, mnemonic in liste_complete()[1].items())
-        Parallel(n_jobs=8)(
+        Parallel(n_jobs=-1)(
             delayed(self.graph_07)(name) for name, mnemonic in liste_complete()[1].items())
 
-        Parallel(n_jobs=8)(
+        Parallel(n_jobs=-1)(
             delayed(self.graph_08)(name) for name, mnemonic in liste_complete()[1].items())
-        Parallel(n_jobs=8)(
+        Parallel(n_jobs=-1)(
             delayed(self.graph_09)(name) for name, mnemonic in liste_complete()[1].items())
-        Parallel(n_jobs=8)(
+        Parallel(n_jobs=-1)(
             delayed(self.graph_10)(name) for name, mnemonic in liste_complete()[1].items())
-        Parallel(n_jobs=8)(
+        Parallel(n_jobs=-1)(
             delayed(self.graph_11)(name) for name, mnemonic in liste_complete()[1].items())
-        Parallel(n_jobs=8)(
+        Parallel(n_jobs=-1)(
             delayed(self.graph_12)(name) for name, mnemonic in liste_complete()[1].items())
 
-        Parallel(n_jobs=8)(
+        Parallel(n_jobs=-1)(
            delayed(self.sim_monte_carlo)(name) for name, mnemonic in liste_complete()[1].items())
 
 
