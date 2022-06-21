@@ -1,7 +1,7 @@
 # Financial_review
 
 ## Description
-Élément d’analyse financière par automatisation de plusieurs rapports. 
+Élément d’analyse financière par automatisation de plusieurs rapports. Nécessite le driver chrome de [Selenium](https://selenium-python.readthedocs.io/).
 
 ## Détails
 L’objectif du logiciel est de fournir un tableau synoptique,
