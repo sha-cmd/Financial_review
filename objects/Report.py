@@ -98,7 +98,7 @@ class Report:
                     for index, corps in enumerate(bodies_list):
                         try:
                             fout.write(corps.replace(values_list[index][0], values_list[index][1]))
-                        except Exception as e:
+                        except Exception:
                             pass
 
                     name_us = str(name).replace(' ', '_')
