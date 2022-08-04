@@ -137,7 +137,7 @@ class Analyse:
         predict_gain = ''
         for line in page.find_all('p'):
             # Seeking Objectif paragraph
-            search = re.search('Objectif', line.text)
+            search = re.search('Objectif de cours', line.text)
             if search != None:
                 res = line.text.replace('\n', '').split(' ')
                 scores = [x for x in res if (x != '')]
@@ -163,7 +163,8 @@ class Analyse:
             page = BeautifulSoup(result.text, 'html.parser')
 
             # Searching for html paragraphs in webpage
-            self.search_objectifs(page)
+            prediction, predict_price, predict_gain = self.search_objectifs(page)
+            return prediction, predict_price, predict_gain
         else:
             return '', '', ''
 
