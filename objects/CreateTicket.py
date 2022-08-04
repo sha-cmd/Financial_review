@@ -9,9 +9,6 @@ class CreateTicketGroup:
         self.names = [key for key, value in names[1].items()]
         self.index = 0
 
-    def execute(self):
-        pass
-
     def __iter__(self):
         return self
 
