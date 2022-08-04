@@ -138,7 +138,8 @@ class Analyse:
             0] if len(self.df.loc[self.df['Nom'] == nom][
                           'Boursorama'].values) > 0 else ''
         print(str(url)+'\n')
-        if (str(url) != '') & (not isinstance(url, None)) & (str(url) != 'nan'):
+        url_exists = (str(url) != '') & (not isinstance(url, None)) & (str(url) != 'nan')
+        if url_exists:
             result = requests.get(url)
             page = BeautifulSoup(result.text, 'html.parser')
             prediction = page.find('div', "c-median-gauge__tooltip")
@@ -147,7 +148,7 @@ class Analyse:
             c = True
             for line in page.find_all('p'):
                 search = re.search('Objectif', line.text)
-                if search is not None:
+                if not isinstance(search, None):
                     while c:
                         res = line.text.replace('\n', '').split(' ')
                         scores = [x for x in res if (x != '')]
