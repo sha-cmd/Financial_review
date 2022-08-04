@@ -83,7 +83,7 @@ class Analyse:
         try:
             self.avg_cac40.update({name: round(((data_cac40.at[data.index[-1], 'close'] /
                                                  data_cac40.at[data.index[0], 'close']) - 1) * 100, 2)})
-        except Exception as e:
+        except Exception:
             self.avg_cac40.update({name: 0})
         self.risk.update({name: round((data['Log_ror'].std() * 250 ** 0.5) * 10, 1)})
         if data['Log_ror'].count() < 250:
