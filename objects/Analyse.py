@@ -4,9 +4,8 @@ import pandas as pd
 import requests
 import re
 
-from urllib.parse import urlparse, urljoin
 from bs4 import BeautifulSoup
-from data.securities import liste_actions_pme, liste_complete, liste_indices, liste_actions_pea
+from data.securities import liste_complete, liste_indices
 from decimal import Decimal
 from objects.Clock import Clock
 from objects.Reader import Reader
@@ -140,7 +139,6 @@ class Analyse:
                           'Boursorama'].values) > 0 else ''
         print(str(url)+'\n')
         if (str(url) != '') & (str(url) is not None) & (str(url) != 'nan'):
-#            parsed_source = urlparse(url)
             result = requests.get(url)
             page = BeautifulSoup(result.text, 'html.parser')
             prediction = page.find('div', "c-median-gauge__tooltip")
@@ -277,10 +275,6 @@ class Analyse:
         worksheet.conditional_format('P2:P600', {'type': 'data_bar'})
         worksheet.conditional_format('Q2:Q600', {'type': 'data_bar'})
 
-       # worksheet.conditional_format('R2:R600',
-       #                              {'type': 'text', 'criteria': 'containing', 'value': '⇗', 'format': format3})
-       # worksheet.conditional_format('S2:S600',
-       #                              {'type': 'text', 'criteria': 'containing', 'value': '⇘', 'format': format4})
         worksheet.conditional_format('R2:R600',
                                      {'type': 'text', 'criteria': 'containing', 'value': 'Offensif', 'format': format3})
         worksheet.conditional_format('R2:R600',
