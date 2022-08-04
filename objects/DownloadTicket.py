@@ -7,7 +7,6 @@ from .db_conn import connexion
 from .db_conn import write_to_db
 from .db_conn import close_connexion
 from data.securities import liste_complete as lst_cplt
-from objects.Ticket import DATE_DEBUT
 from .db_conn import IF_EXIST
 
 logger = log_init()
@@ -21,8 +20,6 @@ def record_info(mnemo, name):
         .reset_index().T.drop('index', axis=0)
     data_df.columns = col_list
     data_df.index.name = 'index'
-    #col_list = [col.lower().replace(' ', '_') for col in list(data_df.columns)]
-    #data_df.columns = pd.Index(col_list)
     conn = connexion()
     table_name = name.lower().replace(' ', '_') + '_info'
     print(table_name)
