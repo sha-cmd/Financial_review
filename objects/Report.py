@@ -30,6 +30,7 @@ from joblib import Parallel, delayed
 STOCK_LEVEL = 'Cours de l\'action '
 SOURCE_DIR = "reports_pdf/"
 
+
 class PlotFinance:
     def __init__(self):
         pass
@@ -46,7 +47,6 @@ class Report:
         self.data = Analyse()
         self.df = pd.read_excel('tex/Strategie_PME.xlsx')
         self.secteurs = pd.unique(self.df['Secteur'])
-
 
     def plot(self):
         Parallel(n_jobs=-1)(
@@ -77,8 +77,7 @@ class Report:
             delayed(self.graph_12)(name) for name, mnemonic in liste_complete()[1].items())
 
         Parallel(n_jobs=-1)(
-           delayed(self.sim_monte_carlo)(name) for name, mnemonic in liste_complete()[1].items())
-
+            delayed(self.sim_monte_carlo)(name) for name, mnemonic in liste_complete()[1].items())
 
     def compiler(self):
         os.chdir("reports_pdf")
@@ -86,7 +85,8 @@ class Report:
         os.system("pdflatex " + str(Clock().date.date()) + '.tex')
         os.system("pdflatex " + str(Clock().date.date()) + '.tex')
 
-    def create(self):  # (filename, noms, synthese, titre_chapitre, strategie):
+    def create(self):
+        # Check if the file exists
         if os.path.isfile(SOURCE_DIR + str(Clock().date.date()) + '.tex'):
             files_to_erase = glob(SOURCE_DIR + str(Clock().date.date()) + '*')
             for file in files_to_erase:
@@ -95,38 +95,22 @@ class Report:
             fout.write(START.replace('DATE', str(Clock().date.date())))
 
             for secteur in self.secteurs:
-                noms = [x for x in liste_complete()[1] if x in self.df.loc[self.df['Secteur'] == secteur]['Nom'].values.ravel()]
+                noms = [x for x in liste_complete()[1] if
+                        x in self.df.loc[self.df['Secteur'] == secteur]['Nom'].values.ravel()]
                 fout.write(CHAPITRE.replace('TITRE', str(secteur)))
                 for name in noms:
+                    values_list = [('TITRE', name), ('SITE', self.df.loc[self.df['Nom'] == name]['Adresse'].values[0]),
+                                   ('WIKI', self.df.loc[self.df['Nom'] == name]['Wiki'].values[0]),
+                                   ('BOURSORAMA', self.df.loc[self.df['Nom'] == name]['Boursorama'].values[0]),
+                                   ('LAPOSTE', self.df.loc[self.df['Nom'] == name]['Laposte'].values[0]),
+                                   ('LEREVENU', self.df.loc[self.df['Nom'] == name]['Lerevenu'].values[0])]
+                    bodies_list = [CORPSSECTION, CORPSSITE, CORPSWIKI, CORPSBOURSORAMA, CORPSLAPOSTE, CORPSLEREVENU]
+                    for index, corps in enumerate(bodies_list):
+                        try:
+                            fout.write(corps.replace(values_list[index][0], values_list[index][1]))
+                        except Exception as e:
+                            pass
 
-                    fout.write(CORPSSECTION.replace('TITRE', name))
-                    try:
-                        fout.write(CORPSSITE.replace('SITE',
-                                                     self.df.loc[self.df['Nom'] == name]['Adresse'].values[
-                                                         0]))
-                    except Exception as e:
-                        pass
-                    try:
-                        fout.write(
-                            CORPSWIKI.replace('WIKI', self.df.loc[self.df['Nom'] == name]['Wiki'].values[0]))
-                    except Exception as e:
-                        pass
-                    try:
-                        fout.write(CORPSBOURSORAMA.replace('BOURSORAMA', self.df.loc[self.df['Nom'] == name][
-                            'Boursorama'].values[0]))
-                    except Exception as e:
-                        pass
-                    try:
-                        fout.write(CORPSLAPOSTE.replace('LAPOSTE',
-                                                        self.df.loc[self.df['Nom'] == name]['Laposte'].values[
-                                                            0]))
-                    except Exception as e:
-                        pass
-                    try:
-                        fout.write(CORPSLEREVENU.replace('LEREVENU', self.df.loc[self.df['Nom'] == name][
-                            'Lerevenu'].values[0]))
-                    except Exception as e:
-                        pass
                     name_us = str(name).replace(' ', '_')
                     fout.write(CORPS.replace('TITRE', name_us))
                     self.data = Analyse()
@@ -139,11 +123,14 @@ class Report:
                                 .replace('ROR', str(round(Decimal(self.data.perf_shot[name]), 2)))
                                 .replace('LOG', str(round(Decimal(self.data.avg_a_log[name]))))
                                 .replace('CINQ', str(round(Decimal(self.data.avg5[name]), 2)) if self.data.avg5[
-                                                                                                     name] is not None else str(0))
+                                                                                                     name] is not None else str(
+                                0))
                                 .replace('TROIS', str(round(Decimal(self.data.avg3[name]), 2)) if self.data.avg3[
-                                                                                                      name] is not None else str(0))
+                                                                                                      name] is not None else str(
+                                0))
                                 .replace('UN', str(round(Decimal(self.data.avg1[name]), 2)) if self.data.avg1[
-                                                                                                   name] is not None else str(0))
+                                                                                                   name] is not None else str(
+                                0))
                                 .replace('RISQUE', str(round(Decimal(self.data.risk[name]), 2))))
 
                     try:
@@ -334,7 +321,7 @@ class Report:
                  , savefig='OutputFiles/mva_short_' + methode + '_' + str(nom).replace(' ', '_') + '.png')
         plt.close()
 
-    def sim_monte_carlo(self, nom,  methode='close'):
+    def sim_monte_carlo(self, nom, methode='close'):
         print('Simulation Monte Carlo', nom)
 
         data = Reader(Ticket(nom)).read()[methode]
