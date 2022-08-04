@@ -127,7 +127,7 @@ class Report:
                         fout.write(DESCRIPTION.replace('ACTIVITE',
                                                        self.data.df.loc[self.data.df['Nom'] == name]['Activité'].values[
                                                            0]))
-                    except Exception as e:
+                    except Exception:
                         pass
                     fout.write(r'\newpage')
             fout.write(END)
