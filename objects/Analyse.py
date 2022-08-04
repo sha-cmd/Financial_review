@@ -11,6 +11,8 @@ from objects.Clock import Clock
 from objects.Reader import Reader
 from objects.Ticket import Ticket
 from joblib import Parallel, delayed
+COLUMNS = ['Nom', 'Prix', 'Achat', 'Vente', 'Perf', 'Cac 40', '5 ans', '3 ans', '1er janv', 'Moy/ans', 'Mois',
+               'Semaine', 'Séance', 'Avis', 'Prix 3 mois', 'Gain 3 mois', 'Rôle', 'Secteur', 'Activité']
 
 
 class Analyse:
@@ -37,10 +39,8 @@ class Analyse:
         self.dictionnaire_beta = {}
         self.trans = {}
         self.df = pd.read_excel('tex/Strategie_PME.xlsx')
-        col = ['Nom', 'Prix', 'Achat', 'Vente', 'Perf', 'Cac 40', '5 ans', '3 ans', '1er janv', 'Moy/ans', 'Mois',
-               'Semaine', 'Séance', 'Avis', 'Prix 3 mois', 'Gain 3 mois', 'Rôle', 'Secteur', 'Activité']
-
-        self.synoptique = pd.DataFrame(columns=col)
+        
+        self.synoptique = pd.DataFrame(columns=COLUMNS)
 
     def perf_du_dernier_jour(self, data, name):
         self.perf_shot.update({name: round(((data['close'][-1] /
@@ -172,32 +172,31 @@ class Analyse:
             delayed(self.make_xlsx)(name) for name, mnemonic in liste_complete()[1].items())
         for r in num:
             prediction, predict_price, predict_gain = self.make_prediction(r[0])
-            self.synoptique = self.synoptique.append({'Nom': r[0],
-                                                      'Prix': r[1],
-                                                      'Achat': r[2],
-                                                      'Vente': r[3],
-                                                      'Perf': r[4],
-                                                      '5 ans': r[5] if r[5] != None else 'N/A',
-                                                      '3 ans': r[6] if r[6] != None else 'N/A',
-                                                      '1er janv': r[7] if r[7] != None else 'N/A',
-                                                      'Moy/ans': r[8],
-                                                      'Mois': r[9],
-                                                      'Semaine': r[10],
-                                                      'Séance': r[11],
-                                                      'Rôle': 'Offensif' if r[12] > 0.75 else 'Défensif',
-                                                      'Secteur': self.df.loc[self.df['Nom'] == r[0]]['Secteur'].iloc[
+            self.synoptique = self.synoptique.append({COLUMNS[0]: r[0],  # Nom
+                                                      COLUMNS[1]: r[1],  # Prix
+                                                      COLUMNS[2]: r[2],  # Achat
+                                                      COLUMNS[3]: r[3],  # Vente
+                                                      COLUMNS[4]: r[4],  # Perf
+                                                      COLUMNS[5]: r[13],  # Cac 40
+                                                      COLUMNS[6]: r[5] if r[5] != None else 'N/A',  # 5 ans
+                                                      COLUMNS[7]: r[6] if r[6] != None else 'N/A',  # 3 ans 
+                                                      COLUMNS[8]: r[7] if r[7] != None else 'N/A',  # 1er janv 
+                                                      COLUMNS[9]: r[8],  # Moy/ans
+                                                      COLUMNS[10]: r[9],  # Mois
+                                                      COLUMNS[11]: r[10],  # Semaine
+                                                      COLUMNS[12]: r[11],  # Séance
+                                                      COLUMNS[16]: 'Offensif' if r[12] > 0.75 else 'Défensif',  # Rôle
+                                                      COLUMNS[17]: self.df.loc[self.df['Nom'] == r[0]]['Secteur'].iloc[
                                                           0] if len(self.df.loc[self.df['Nom'] == r[0]][
-                                                                        'Secteur'].values) > 0 else '',
-                                                      'Activité':
+                                                                        'Secteur'].values) > 0 else '',  # Secteur
+                                                      COLUMNS[18]:  
                                                           self.df.loc[self.df['Nom'] == r[0]]['Activité'].iloc[
                                                               0] if len(self.df.loc[self.df['Nom'] == r[0]][
-                                                                            'Activité'].values) > 0 else '',
-                                                      'Cac 40': r[13],  # ,
-                                                      # 'Avis': '⇗' if (
-                                                      #        self.predicted.get(name).get('5') == True) else '⇘'
-                                                      'Avis': prediction,
-                                                      'Prix 3 mois': predict_price,
-                                                      'Gain 3 mois': predict_gain
+                                                                            'Activité'].values) > 0 else '',  # Activité
+                                                      
+                                                      COLUMNS[13]: prediction,  # Avis
+                                                      COLUMNS[14]: predict_price,  # Prix 3 mois
+                                                      COLUMNS[15]: predict_gain  # Gain 3 mois
                                                       }, ignore_index=True)
 
         self.synoptique['Nom'] = self.synoptique['Nom'].astype('str')
