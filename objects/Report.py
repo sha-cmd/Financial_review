@@ -104,28 +104,28 @@ class Report:
                         fout.write(CORPSSITE.replace('SITE',
                                                      self.df.loc[self.df['Nom'] == name]['Adresse'].values[
                                                          0]))
-                    except:
+                    except Exception as e:
                         pass
                     try:
                         fout.write(
                             CORPSWIKI.replace('WIKI', self.df.loc[self.df['Nom'] == name]['Wiki'].values[0]))
-                    except:
+                    except Exception as e:
                         pass
                     try:
                         fout.write(CORPSBOURSORAMA.replace('BOURSORAMA', self.df.loc[self.df['Nom'] == name][
                             'Boursorama'].values[0]))
-                    except:
+                    except Exception as e:
                         pass
                     try:
                         fout.write(CORPSLAPOSTE.replace('LAPOSTE',
                                                         self.df.loc[self.df['Nom'] == name]['Laposte'].values[
                                                             0]))
-                    except:
+                    except Exception as e:
                         pass
                     try:
                         fout.write(CORPSLEREVENU.replace('LEREVENU', self.df.loc[self.df['Nom'] == name][
                             'Lerevenu'].values[0]))
-                    except:
+                    except Exception as e:
                         pass
                     name_us = str(name).replace(' ', '_')
                     fout.write(CORPS.replace('TITRE', name_us))
@@ -150,7 +150,7 @@ class Report:
                         fout.write(DESCRIPTION.replace('ACTIVITE',
                                                        self.data.df.loc[self.data.df['Nom'] == name]['Activité'].values[
                                                            0]))
-                    except:
+                    except Exception as e:
                         pass
                     fout.write(r'\newpage')
             fout.write(END)
