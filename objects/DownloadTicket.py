@@ -51,9 +51,7 @@ class DownloadTicket:
         self.group = ticketgroup
 
     def execute(self):
-        team_it = iter(self.group.names)
-        for i in range(len(self.group.names)):
-            name = next(team_it)
+        for name in self.group.names:
             logger.info('Processus de téléchargement et d\'écriture en base de la table ' + name)
             mnemo = lst_cplt()[1][name]
             record_data(mnemo, name)
