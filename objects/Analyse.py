@@ -132,7 +132,26 @@ class Analyse:
         if data['Dis_ror'].count() > 250:
             fichier.write(f'moyenne annuelle suivi sommé       {self.avg_a_dis[name]:+5}%\n')
 
+    def search_objectifs(self, page):
+        predict_price = ''
+        predict_gain = ''
+        for line in page.find_all('p'):
+            # Seeking Objectif paragraph
+            search = re.search('Objectif', line.text)
+            if search != None:
+                res = line.text.replace('\n', '').split(' ')
+                scores = [x for x in res if (x != '')]
+                print(scores)
+                predict_price = scores[6]
+                predict_gain = scores[-1][:-1] if str.isnumeric(scores[-1][:-1].replace('.', '1')) else 0
+        prediction = page.find('div', "c-median-gauge__tooltip")
+        if prediction != None:
+            return float(prediction.text), float(predict_price), float(predict_gain) / 100
+        else:
+            return '', '', ''
+
     def make_prediction(self, nom):
+        """Search in a web page to follow objectives for a stock"""
         print(nom)
         url = self.df.loc[self.df['Nom'] == nom]['Boursorama'].iloc[
             0] if len(self.df.loc[self.df['Nom'] == nom][
@@ -142,24 +161,9 @@ class Analyse:
         if url_exists:
             result = requests.get(url)
             page = BeautifulSoup(result.text, 'html.parser')
-            prediction = page.find('div', "c-median-gauge__tooltip")
-            predict_price = ''
-            predict_gain = ''
-            c = True
+
             # Searching for html paragraphs in webpage
-            for line in page.find_all('p'):
-                # Seeking Objectif paragraph
-                search = re.search('Objectif', line.text)
-                if search != None:
-                    res = line.text.replace('\n', '').split(' ')
-                    scores = [x for x in res if (x != '')]
-                    print(scores)
-                    predict_price = scores[6]
-                    predict_gain = scores[-1][:-1] if str.isnumeric(scores[-1][:-1].replace('.', '1')) else 0
-            if prediction != None:
-                return float(prediction.text), float(predict_price), float(predict_gain)/100
-            else:
-                return '', '', ''
+            self.search_objectifs(page)
         else:
             return '', '', ''
 
