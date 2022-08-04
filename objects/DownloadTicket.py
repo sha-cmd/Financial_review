@@ -8,6 +8,7 @@ from .db_conn import write_to_db
 from .db_conn import close_connexion
 from data.securities import liste_complete as lst_cplt
 from objects.Ticket import DATE_DEBUT
+from .db_conn import IF_EXIST
 
 logger = log_init()
 
@@ -30,7 +31,7 @@ def record_info(mnemo, name):
     logger.debug('Écriture dans la base de la table ' + table_name)
 
 
-def record_data(mnemo, name, if_exist):
+def record_data(mnemo, name, if_exist=IF_EXIST):
     data = yf.Ticker(mnemo)
     data_df = pd.DataFrame(data.history(period='max'))
     col_list = [col.lower().replace(' ', '_') for col in list(data_df.columns)]
