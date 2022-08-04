@@ -27,6 +27,8 @@ from objects.Clock import Clock
 from objects.Analyse import Analyse
 from joblib import Parallel, delayed
 
+STOCK_LEVEL = 'Cours de l\'action '
+
 
 class PlotFinance:
     def __init__(self):
@@ -44,6 +46,7 @@ class Report:
         self.data = Analyse()
         self.df = pd.read_excel('tex/Strategie_PME.xlsx')
         self.secteurs = pd.unique(self.df['Secteur'])
+
 
     def plot(self):
         Parallel(n_jobs=-1)(
@@ -160,10 +163,10 @@ class Report:
         data.index = pd.Index([pd.to_datetime(x) for x in data.index])
         methode = 'close'
         plt.figure(figsize=(10, 6))
-        mpf.plot(data.iloc[:, 0:5], type='line', title='Cours de l\'action ' + nom
+        mpf.plot(data.iloc[:, 0:5], type='line', title=STOCK_LEVEL + nom
                  , savefig='OutputFiles/stockprice_' + methode + '_' + str(nom).replace(' ', '_') + '.png')
         plt.close()
-        mpf.plot(data.iloc[-500:, 0:5], type='line', mav=(12, 20, 50), volume=True, title='Cours de l\'action ' + nom
+        mpf.plot(data.iloc[-500:, 0:5], type='line', mav=(12, 20, 50), volume=True, title=STOCK_LEVEL + nom
                  , savefig='OutputFiles/mva_' + methode + '_' + str(nom).replace(' ', '_') + '.png')
         plt.close()
 
@@ -174,7 +177,7 @@ class Report:
         data.index = pd.Index([pd.to_datetime(x) for x in data.index])
         top = plt.subplot2grid((4, 4), (0, 0), rowspan=3, colspan=4)
         top.plot(data.index, data[methode], label='Prix à la Clôture')
-        plt.title("Cours de l'action {}".format(nom))
+        plt.title("{}{}".format(STOCK_LEVEL, nom))
         plt.legend(loc=2)
         # The bottom plot consisting of daily trading volume
         bottom = plt.subplot2grid((4, 4), (3, 0), rowspan=1, colspan=4)
@@ -327,13 +330,12 @@ class Report:
         methode = 'close'
         data = Reader(Ticket(nom)).read()
         data.index = pd.Index([pd.to_datetime(x) for x in data.index])
-        mpf.plot(data.iloc[-500:], type='line', mav=(5, 10, 25), volume=True, title='Cours de l\'action ' + nom
+        mpf.plot(data.iloc[-500:], type='line', mav=(5, 10, 25), volume=True, title=STOCK_LEVEL + nom
                  , savefig='OutputFiles/mva_short_' + methode + '_' + str(nom).replace(' ', '_') + '.png')
         plt.close()
 
     def sim_monte_carlo(self, nom,  methode='close'):
         print('Simulation Monte Carlo', nom)
-        # methode = 'close'
 
         data = Reader(Ticket(nom)).read()[methode]
 
