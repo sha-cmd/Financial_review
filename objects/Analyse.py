@@ -200,13 +200,13 @@ class Analyse:
                                                       }, ignore_index=True)
 
         self.synoptique[COLUMNS[0]] = self.synoptique[COLUMNS[0]].astype('str')
+        self.synoptique[COLUMNS[1]] = self.synoptique[COLUMNS[1]].astype('float')
         self.synoptique[COLUMNS[2]] = self.synoptique[COLUMNS[2]].astype('str')
         self.synoptique[COLUMNS[3]] = self.synoptique[COLUMNS[3]].astype('str')
-        self.synoptique[COLUMNS[1]] = self.synoptique[COLUMNS[1]].astype('float')
         self.synoptique[COLUMNS[4]] = self.synoptique[COLUMNS[4]].astype('float')
+        self.synoptique[COLUMNS[5]] = self.synoptique[COLUMNS[5]].astype('float')
         self.synoptique[COLUMNS[12]] = self.synoptique[COLUMNS[12]].astype('float')
         self.synoptique[COLUMNS[16]] = self.synoptique[COLUMNS[16]].astype('str')
-        self.synoptique[COLUMNS[5]] = self.synoptique[COLUMNS[5]].astype('float')
         # Set Pandas engine to xlsxwriter
         writer = pd.ExcelWriter('reports_excel/' + str(Clock().date.date()) + '_synoptique.xlsx',
                                 engine='xlsxwriter')
