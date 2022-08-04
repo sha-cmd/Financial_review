@@ -31,14 +31,6 @@ STOCK_LEVEL = 'Cours de l\'action '
 SOURCE_DIR = "reports_pdf/"
 
 
-class PlotFinance:
-    def __init__(self):
-        pass
-
-    def calc(self, data, nom, methode):
-        plt.close('all')
-
-
 class Report:
     def __init__(self):  # , analyse):
         print('Report')
