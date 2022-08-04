@@ -16,6 +16,7 @@ class DateGiver:
     def __init__(self, checker: Checker, clock: Clock):
         self.checker = checker
         if checker.is_in_db:
+            # Control of request dates and last day of market activity
             self.conclusion: bool = np.datetime64(clock.last_day) > np.datetime64(checker.date_end)
             if self.conclusion:
                 self.from_date = np.busday_offset(np.datetime64(checker.date_end), 1)
