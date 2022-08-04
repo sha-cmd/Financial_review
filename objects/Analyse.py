@@ -199,14 +199,14 @@ class Analyse:
                                                       COLUMNS[15]: predict_gain  # Gain 3 mois
                                                       }, ignore_index=True)
 
-        self.synoptique['Nom'] = self.synoptique['Nom'].astype('str')
-        self.synoptique['Achat'] = self.synoptique['Achat'].astype('str')
-        self.synoptique['Vente'] = self.synoptique['Vente'].astype('str')
-        self.synoptique['Prix'] = self.synoptique['Prix'].astype('float')
-        self.synoptique['Perf'] = self.synoptique['Perf'].astype('float')
-        self.synoptique['Séance'] = self.synoptique['Séance'].astype('float')
-        self.synoptique['Rôle'] = self.synoptique['Rôle'].astype('str')
-        self.synoptique['Cac 40'] = self.synoptique['Cac 40'].astype('float')
+        self.synoptique[COLUMNS[0]] = self.synoptique[COLUMNS[0]].astype('str')
+        self.synoptique[COLUMNS[2]] = self.synoptique[COLUMNS[2]].astype('str')
+        self.synoptique[COLUMNS[3]] = self.synoptique[COLUMNS[3]].astype('str')
+        self.synoptique[COLUMNS[1]] = self.synoptique[COLUMNS[1]].astype('float')
+        self.synoptique[COLUMNS[4]] = self.synoptique[COLUMNS[4]].astype('float')
+        self.synoptique[COLUMNS[12]] = self.synoptique[COLUMNS[12]].astype('float')
+        self.synoptique[COLUMNS[16]] = self.synoptique[COLUMNS[16]].astype('str')
+        self.synoptique[COLUMNS[5]] = self.synoptique[COLUMNS[5]].astype('float')
         # Set Pandas engine to xlsxwriter
         writer = pd.ExcelWriter('reports_excel/' + str(Clock().date.date()) + '_synoptique.xlsx',
                                 engine='xlsxwriter')
