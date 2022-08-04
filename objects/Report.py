@@ -36,8 +36,6 @@ class PlotFinance:
         pass
 
     def calc(self, data, nom, methode):
-        t1 = time.perf_counter()
-
         plt.close('all')
 
 
