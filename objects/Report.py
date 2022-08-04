@@ -28,7 +28,7 @@ from objects.Analyse import Analyse
 from joblib import Parallel, delayed
 
 STOCK_LEVEL = 'Cours de l\'action '
-
+SOURCE_DIR = "reports_pdf/"
 
 class PlotFinance:
     def __init__(self):
@@ -87,11 +87,11 @@ class Report:
         os.system("pdflatex " + str(Clock().date.date()) + '.tex')
 
     def create(self):  # (filename, noms, synthese, titre_chapitre, strategie):
-        if os.path.isfile("reports_pdf/" + str(Clock().date.date()) + '.tex'):
-            files_to_erase = glob("reports_pdf/" + str(Clock().date.date()) + '*')
+        if os.path.isfile(SOURCE_DIR + str(Clock().date.date()) + '.tex'):
+            files_to_erase = glob(SOURCE_DIR + str(Clock().date.date()) + '*')
             for file in files_to_erase:
                 os.remove(file)
-        with open("reports_pdf/" + str(Clock().date.date()) + '.tex', 'w', encoding='utf8') as fout:
+        with open(SOURCE_DIR + str(Clock().date.date()) + '.tex', 'w', encoding='utf8') as fout:
             fout.write(START.replace('DATE', str(Clock().date.date())))
 
             for secteur in self.secteurs:
