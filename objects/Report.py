@@ -76,6 +76,7 @@ class Report:
         os.system("pdflatex " + str(Clock().date.date()) + '.tex')
 
     def create(self):
+        # Automation of a report
         # Check if the file exists
         if os.path.isfile(SOURCE_DIR + str(Clock().date.date()) + '.tex'):
             files_to_erase = glob(SOURCE_DIR + str(Clock().date.date()) + '*')
