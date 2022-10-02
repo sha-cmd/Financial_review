@@ -137,7 +137,7 @@ class Analyse:
         predict_gain = ''
         for line in page.find_all('p'):
             # Seeking Objectif paragraph
-            search = re.search('Objectif de cours', line.text)
+            search = re.search('Objectif de cours \d+ mois :', line.text)
             if search != None:
                 res = line.text.replace('\n', '').split(' ')
                 scores = [x for x in res if (x != '')]
