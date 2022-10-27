@@ -141,9 +141,10 @@ class Analyse:
             if search != None:
                 res = line.text.replace('\n', '').split(' ')
                 scores = [x for x in res if (x != '')]
-                print(scores)
+                print(scores, type(scores), len(scores))
                 predict_price = scores[6]
                 predict_gain = scores[-1][:-1] if str.isnumeric(scores[-1][:-1].replace('.', '1')) else 0
+                break
         prediction = page.find('div', "c-median-gauge__tooltip")
         if prediction != None:
             return float(prediction.text), float(predict_price), float(predict_gain) / 100
