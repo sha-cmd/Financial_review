@@ -67,6 +67,6 @@ class Update:
         self.data_update.drop('Adj Close', axis=1, inplace=True)
 
     def download_and_format(self):
-        self.data_update = yf.download(self.ticket.mnemo, start=self.date.from_date, end=self.date.to_date)
+        self.data_update = yf.download(self.ticket.mnemo, start=pd.to_datetime(self.date.from_date), end=pd.to_datetime(self.date.to_date))
         self.sharpen()
         self.rename_columns()
