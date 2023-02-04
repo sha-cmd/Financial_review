@@ -116,6 +116,18 @@ CORPS = r"""
      \caption{Volatilité à 15 jours}\label{Fig:volatility_15_close_TITRE}
    \end{minipage}
 \end{figure}
+\begin{figure}[!htb]
+   \begin{minipage}{0.5\textwidth}
+     \centering
+     \includegraphics[width=.8\linewidth]{prophet_close_TITRE.png}
+     \caption{Prédictions}\label{Fig:prophet_TITRE}
+   \end{minipage}\hfill
+   \begin{minipage}{0.5\textwidth}
+     \centering
+     \includegraphics[width=.8\linewidth]{prophet_components_close_TITRE.png}
+     \caption{Composantes Time Series}\label{Fig:prophet_components_TITRE}
+   \end{minipage}
+\end{figure}
 \newpage
 %\begin{figure}[!htb]
 %   \begin{minipage}{0.5\textwidth}
