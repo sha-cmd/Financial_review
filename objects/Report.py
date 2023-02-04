@@ -12,10 +12,12 @@ import mplfinance as mpf
 from glob import glob
 from scipy import stats
 import pandas as pd
+from prophet import Prophet
 import numpy as np
 from scipy.stats import norm
 from decimal import Decimal
 import os
+import sys
 import gc
 from objects.latexFile import START, CORPS, CORPSSITE, CORPSWIKI, CORPSSECTION, CORPSLEREVENU, CORPSLAPOSTE, \
     CORPSBOURSORAMA, \
@@ -68,6 +70,8 @@ class Report:
 
         Parallel(n_jobs=-1)(
             delayed(self.sim_monte_carlo)(name) for name, mnemonic in liste_complete()[1].items())
+        Parallel(n_jobs=-1)(
+            delayed(self.prophet)(name) for name, mnemonic in liste_complete()[1].items())
 
     def compiler(self):
         os.chdir("reports_pdf")
@@ -138,7 +142,9 @@ class Report:
         print('Graph 01', nom)
         methode = 'close'
         data = Reader(Ticket(nom)).read()
-        data.index = pd.Index([pd.to_datetime(x) for x in data.index])
+        if(len(data) == 0):
+            sys.exit(nom, "n'a pas de données dans la base, retirer là des securities")
+        data.index = pd.DatetimeIndex([pd.to_datetime(x).tz_localize(None) for x in data.index])
         methode = 'close'
         plt.figure(figsize=(10, 6))
         mpf.plot(data.iloc[:, 0:5], type='line', title=STOCK_LEVEL + nom
@@ -152,7 +158,7 @@ class Report:
         print('Graph 02', nom)
         methode = 'close'
         data = Reader(Ticket(nom)).read()
-        data.index = pd.Index([pd.to_datetime(x) for x in data.index])
+        data.index = pd.DatetimeIndex([pd.to_datetime(x).tz_localize(None) for x in data.index])
         top = plt.subplot2grid((4, 4), (0, 0), rowspan=3, colspan=4)
         top.plot(data.index, data[methode], label='Prix à la Clôture')
         plt.title("{}{}".format(STOCK_LEVEL, nom))
@@ -170,7 +176,7 @@ class Report:
         print('Graph 03', nom)
         methode = 'close'
         data = Reader(Ticket(nom)).read()
-        data.index = pd.Index([pd.to_datetime(x) for x in data.index])
+        data.index = pd.DatetimeIndex([pd.to_datetime(x).tz_localize(None) for x in data.index])
         # Volatility plot
         df_filled = data[[methode]].asfreq('D', method='ffill')
         df_returns = df_filled.pct_change()
@@ -185,7 +191,7 @@ class Report:
         print('Graph 04', nom)
         methode = 'close'
         data = Reader(Ticket(nom)).read()
-        data.index = pd.Index([pd.to_datetime(x) for x in data.index])
+        data.index = pd.DatetimeIndex([pd.to_datetime(x).tz_localize(None) for x in data.index])
         df_filled = data[[methode]].asfreq('D', method='ffill')
         df_returns = df_filled.pct_change()
         df_std = df_returns[-250:].rolling(window=15, min_periods=15).std()
@@ -199,7 +205,7 @@ class Report:
         print('Graph 05', nom)
         methode = 'close'
         data = Reader(Ticket(nom)).read()
-        data.index = pd.Index([pd.to_datetime(x) for x in data.index])
+        data.index = pd.DatetimeIndex([pd.to_datetime(x).tz_localize(None) for x in data.index])
         df_filled = data[[methode]].asfreq('D', method='ffill')
         df_returns = df_filled.pct_change()
         df_std = df_returns[-50:].rolling(window=7, min_periods=7).std()
@@ -213,7 +219,7 @@ class Report:
         print('Graph 06', nom)
         methode = 'close'
         data = Reader(Ticket(nom)).read()
-        data.index = pd.Index([pd.to_datetime(x) for x in data.index])
+        data.index = pd.DatetimeIndex([pd.to_datetime(x).tz_localize(None) for x in data.index])
         df_filled = data[[methode]].asfreq('D', method='ffill')
         df_returns = df_filled.pct_change()
         df_std = df_returns[-25:].rolling(window=3, min_periods=3).std()
@@ -228,7 +234,7 @@ class Report:
 
         methode = 'close'
         data = Reader(Ticket(nom)).read()
-        data.index = pd.Index([pd.to_datetime(x) for x in data.index])
+        data.index = pd.DatetimeIndex([pd.to_datetime(x).tz_localize(None) for x in data.index])
         # Volatility plot
         df_filled = data[['volume']].asfreq('D', method='ffill')
         df_returns = df_filled.pct_change()
@@ -243,7 +249,7 @@ class Report:
         print('Graph 08', nom)
         methode = 'close'
         data = Reader(Ticket(nom)).read()
-        data.index = pd.Index([pd.to_datetime(x) for x in data.index])
+        data.index = pd.DatetimeIndex([pd.to_datetime(x).tz_localize(None) for x in data.index])
         df_filled = data[['volume']].asfreq('D', method='ffill')
         df_returns = df_filled.pct_change()
         df_std = df_returns[-250:].rolling(window=15, min_periods=15).std()
@@ -259,7 +265,7 @@ class Report:
         print('Graph 09', nom)
         methode = 'close'
         data = Reader(Ticket(nom)).read()
-        data.index = pd.Index([pd.to_datetime(x) for x in data.index])
+        data.index = pd.DatetimeIndex([pd.to_datetime(x).tz_localize(None) for x in data.index])
         df_filled = data[['volume']].asfreq('D', method='ffill')
         df_returns = df_filled.pct_change()
         df_std = df_returns[-50:].rolling(window=7, min_periods=7).std()
@@ -273,7 +279,7 @@ class Report:
         print('Graph 10', nom)
         methode = 'close'
         data = Reader(Ticket(nom)).read()
-        data.index = pd.Index([pd.to_datetime(x) for x in data.index])
+        data.index = pd.DatetimeIndex([pd.to_datetime(x).tz_localize(None) for x in data.index])
         df_filled = data[['volume']].asfreq('D', method='ffill')
         df_returns = df_filled.pct_change()
         df_std = df_returns[-25:].rolling(window=3, min_periods=3).std()
@@ -288,7 +294,7 @@ class Report:
 
         methode = 'close'
         data = Reader(Ticket(nom)).read()
-        data.index = pd.Index([pd.to_datetime(x) for x in data.index])
+        data.index = pd.DatetimeIndex([pd.to_datetime(x).tz_localize(None) for x in data.index])
         # Quantile-quantile plot
         figure = plt.figure(figsize=(8, 4))
         ax = figure.add_subplot(111)
@@ -307,7 +313,7 @@ class Report:
 
         methode = 'close'
         data = Reader(Ticket(nom)).read()
-        data.index = pd.Index([pd.to_datetime(x) for x in data.index])
+        data.index = pd.DatetimeIndex([pd.to_datetime(x).tz_localize(None) for x in data.index])
         mpf.plot(data.iloc[-500:], type='line', mav=(5, 10, 25), volume=True, title=STOCK_LEVEL + nom
                  , savefig='OutputFiles/mva_short_' + methode + '_' + str(nom).replace(' ', '_') + '.png')
         plt.close()
@@ -344,3 +350,19 @@ class Report:
         plt.close()
         del price_list, log_returns, u, var, drift, stdev, daily_returns, data
         gc.collect()
+
+
+    def prophet(self, nom, methode='close'):
+        print('Prédiction Meta', nom)
+        data = Reader(Ticket(nom)).read()[[methode]]
+        data.index = pd.DatetimeIndex([pd.to_datetime(x).tz_localize(None) for x in data.index])
+        data.reset_index(inplace=True)
+        data = data.rename(columns={'index': 'ds', methode: 'y'})
+        m = Prophet()
+        m.fit(data)
+        future = m.make_future_dataframe(periods=365)
+        future.tail()
+        forecast = m.predict(future)
+        forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].tail()
+        m.plot(forecast).savefig('OutputFiles/prophet_' + methode + '_' + str(nom).replace(' ', '_') + '.png')
+        m.plot_components(forecast).savefig('OutputFiles/prophet_components_' + methode + '_' + str(nom).replace(' ', '_') + '.png')
