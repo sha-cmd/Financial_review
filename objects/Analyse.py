@@ -12,7 +12,8 @@ from objects.Reader import Reader
 from objects.Ticket import Ticket
 from joblib import Parallel, delayed
 COLUMNS = ['Nom', 'Prix', 'Achat', 'Vente', 'Perf', 'Cac 40', '5 ans', '3 ans', '1er janv', 'Moy/ans', 'Mois',
-               'Semaine', 'Séance', 'Avis', 'Prix 3 mois', 'Gain 3 mois', 'Rôle', 'Secteur', 'Activité']
+               'Semaine', 'Séance', #'Avis', 'Prix 3 mois', 'Gain 3 mois',
+                 'Rôle', 'Secteur', 'Activité']
 
 
 class Analyse:
@@ -132,48 +133,48 @@ class Analyse:
         if data['Dis_ror'].count() > 250:
             fichier.write(f'moyenne annuelle suivi sommé       {self.avg_a_dis[name]:+5}%\n')
 
-    def search_objectifs(self, page):
-        predict_price = ''
-        predict_gain = ''
-        for line in page.find_all('p'):
-            # Seeking Objectif paragraph
-            search = re.search('Objectif de cours \d+ mois :', line.text)
-            if search != None:
-                res = line.text.replace('\n', '').split(' ')
-                scores = [x for x in res if (x != '')]
-                print(scores, type(scores), len(scores))
-                predict_price = scores[6]
-                predict_gain = scores[-1][:-1] if str.isnumeric(scores[-1][:-1].replace('.', '1')) else 0
-                break
-        prediction = page.find('div', "c-median-gauge__tooltip")
-        if prediction != None:
-            return float(prediction.text), float(predict_price), float(predict_gain) / 100
-        else:
-            return '', '', ''
+    # def search_objectifs(self, page):
+    #     predict_price = ''
+    #     predict_gain = ''
+    #     for line in page.find_all('p'):
+    #         # Seeking Objectif paragraph
+    #         search = re.search('Objectif de cours \d+ mois :', line.text)
+    #         if search != None:
+    #             res = line.text.replace('\n', '').split(' ')
+    #             scores = [x for x in res if (x != '')]
+    #             print(scores, type(scores), len(scores))
+    #             predict_price = scores[6]
+    #             predict_gain = scores[-1][:-1] if str.isnumeric(scores[-1][:-1].replace('.', '1')) else 0
+    #             break
+    #     prediction = page.find('div', "c-median-gauge__tooltip")
+    #     if prediction != None:
+    #         return float(prediction.text), float(predict_price), float(predict_gain) / 100
+    #     else:
+    #         return '', '', ''
 
-    def make_prediction(self, nom):
-        """Search in a web page to follow objectives for a stock"""
-        print(nom)
-        url = self.df.loc[self.df['Nom'] == nom]['Boursorama'].iloc[
-            0] if len(self.df.loc[self.df['Nom'] == nom][
-                          'Boursorama'].values) > 0 else ''
-        print(str(url)+'\n')
-        url_exists = (str(url) != '') & (url != None) & (str(url) != 'nan')
-        if url_exists:
-            result = requests.get(url)
-            page = BeautifulSoup(result.text, 'html.parser')
-
-            # Searching for html paragraphs in webpage
-            prediction, predict_price, predict_gain = self.search_objectifs(page)
-            return prediction, predict_price, predict_gain
-        else:
-            return '', '', ''
+    # def make_prediction(self, nom):
+    #     """Search in a web page to follow objectives for a stock"""
+    #     print(nom)
+    #     url = self.df.loc[self.df['Nom'] == nom]['Boursorama'].iloc[
+    #         0] if len(self.df.loc[self.df['Nom'] == nom][
+    #                       'Boursorama'].values) > 0 else ''
+    #     print(str(url)+'\n')
+    #     url_exists = (str(url) != '') & (url != None) & (str(url) != 'nan')
+    #     if url_exists:
+    #         result = requests.get(url)
+    #         page = BeautifulSoup(result.text, 'html.parser')
+    #
+    #         # Searching for html paragraphs in webpage
+    #         prediction, predict_price, predict_gain = self.search_objectifs(page)
+    #         return prediction, predict_price, predict_gain
+    #     else:
+    #         return '', '', ''
 
     def to_xlsx(self):
         num = Parallel(n_jobs=-1)(
             delayed(self.make_xlsx)(name) for name, mnemonic in liste_complete()[1].items())
         for r in num:
-            prediction, predict_price, predict_gain = self.make_prediction(r[0])
+            #prediction, predict_price, predict_gain = self.make_prediction(r[0])
             self.synoptique = self.synoptique.append({COLUMNS[0]: r[0],  # Nom
                                                       COLUMNS[1]: r[1],  # Prix
                                                       COLUMNS[2]: r[2],  # Achat
@@ -187,18 +188,18 @@ class Analyse:
                                                       COLUMNS[10]: r[9],  # Mois
                                                       COLUMNS[11]: r[10],  # Semaine
                                                       COLUMNS[12]: r[11],  # Séance
-                                                      COLUMNS[16]: 'Offensif' if r[12] > 0.75 else 'Défensif',  # Rôle
-                                                      COLUMNS[17]: self.df.loc[self.df['Nom'] == r[0]]['Secteur'].iloc[
+                                                      COLUMNS[13]: 'Offensif' if r[12] > 0.75 else 'Défensif',  # Rôle
+                                                      COLUMNS[14]: self.df.loc[self.df['Nom'] == r[0]]['Secteur'].iloc[
                                                           0] if len(self.df.loc[self.df['Nom'] == r[0]][
                                                                         'Secteur'].values) > 0 else '',  # Secteur
-                                                      COLUMNS[18]:  
+                                                      COLUMNS[15]:
                                                           self.df.loc[self.df['Nom'] == r[0]]['Activité'].iloc[
                                                               0] if len(self.df.loc[self.df['Nom'] == r[0]][
                                                                             'Activité'].values) > 0 else '',  # Activité
                                                       
-                                                      COLUMNS[13]: prediction,  # Avis
-                                                      COLUMNS[14]: predict_price,  # Prix 3 mois
-                                                      COLUMNS[15]: predict_gain  # Gain 3 mois
+                                                     # COLUMNS[13]: prediction,  # Avis
+                                                     # COLUMNS[14]: predict_price,  # Prix 3 mois
+                                                     # COLUMNS[15]: predict_gain  # Gain 3 mois
                                                       }, ignore_index=True)
 
         self.synoptique[COLUMNS[0]] = self.synoptique[COLUMNS[0]].astype('str')
@@ -208,7 +209,7 @@ class Analyse:
         self.synoptique[COLUMNS[4]] = self.synoptique[COLUMNS[4]].astype('float')
         self.synoptique[COLUMNS[5]] = self.synoptique[COLUMNS[5]].astype('float')
         self.synoptique[COLUMNS[12]] = self.synoptique[COLUMNS[12]].astype('float')
-        self.synoptique[COLUMNS[16]] = self.synoptique[COLUMNS[16]].astype('str')
+        self.synoptique[COLUMNS[15]] = self.synoptique[COLUMNS[15]].astype('str')
         # Set Pandas engine to xlsxwriter
         writer = pd.ExcelWriter('reports_excel/' + str(Clock().date.date()) + '_synoptique.xlsx',
                                 engine='xlsxwriter')
@@ -253,18 +254,18 @@ class Analyse:
         worksheet.set_column('M:M', 9, format2)
         # Perf du Jour
         worksheet.set_column('N:N', 9, format2)
-        # Avis
-        worksheet.set_column('O:O', 9)
-        # Prix 3 mois
-        worksheet.set_column('P:P', 9, format1)
-        # Gain 3 mois
-        worksheet.set_column('Q:Q', 9, format2)
+        # Avis # Rôle
+        worksheet.set_column('O:O', 9, format0)
+        # Prix 3 mois # Secteur
+        worksheet.set_column('P:P', 9)#, format1)
+        # Gain 3 mois # Activité
+        worksheet.set_column('Q:Q', 9)#, format2)
         # Rôle
-        worksheet.set_column('R:R', 9, format0)
+        # worksheet.set_column('R:R', 9)#, format0)
         # Secteur
-        worksheet.set_column('S:S', 9)
+        # worksheet.set_column('S:S', 9)
         # Activité
-        worksheet.set_column('T:T', 19)
+        # worksheet.set_column('T:T', 19)
         worksheet.conditional_format('C2:C600', {'type': '3_color_scale'})
         worksheet.conditional_format('E2:E600', {'type': 'data_bar'})
         worksheet.conditional_format('F2:F600', {'type': 'data_bar'})
@@ -277,13 +278,13 @@ class Analyse:
         worksheet.conditional_format('M2:M600', {'type': 'data_bar'})
 
         worksheet.conditional_format('N2:N600', {'type': 'data_bar'})
-        worksheet.conditional_format('O2:O600', {'type': 'data_bar'})
-        worksheet.conditional_format('P2:P600', {'type': 'data_bar'})
-        worksheet.conditional_format('Q2:Q600', {'type': 'data_bar'})
+        #worksheet.conditional_format('O2:O600', {'type': 'data_bar'})
+        #worksheet.conditional_format('P2:P600', {'type': 'data_bar'})
+        #worksheet.conditional_format('Q2:Q600', {'type': 'data_bar'})
 
-        worksheet.conditional_format('R2:R600',
+        worksheet.conditional_format('O2:R600',
                                      {'type': 'text', 'criteria': 'containing', 'value': 'Offensif', 'format': format3})
-        worksheet.conditional_format('R2:R600',
+        worksheet.conditional_format('O2:R600',
                                      {'type': 'text', 'criteria': 'containing', 'value': 'Défensif', 'format': format4})
         c = Clock()
         worksheet.write(0, 0, c.date)
