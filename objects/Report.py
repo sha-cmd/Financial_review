@@ -7,6 +7,7 @@ Ce programme analyse et crée un rapport financier
 """
 from data.securities import liste_complete
 import time
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import mplfinance as mpf
 from glob import glob
@@ -146,6 +147,7 @@ class Report:
             sys.exit(nom, "n'a pas de données dans la base, retirer là des securities")
         data.index = pd.DatetimeIndex([pd.to_datetime(x).tz_localize(None) for x in data.index])
         methode = 'close'
+        mpl.use('TkAgg')
         plt.figure(figsize=(10, 6))
         mpf.plot(data.iloc[:, 0:5], type='line', title=STOCK_LEVEL + nom
                  , savefig='OutputFiles/stockprice_' + methode + '_' + str(nom).replace(' ', '_') + '.png')
