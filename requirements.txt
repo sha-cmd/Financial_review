@@ -1,4 +1,3 @@
-pystan
 prophet
 sklearn
 numpy
