@@ -35,9 +35,11 @@ class Update:
                 # Check if data is collected in previous function
                 if not self.data_update.empty:
                     # Check that the updated data is chronologically after the local copy of data
-                    check_chronology = (pd.to_datetime(self.reader.index[-1]) < pd.to_datetime(self.data_update.index[0]))
+                    check_chronology = (pd.to_datetime(self.reader.index[-1]).tz_localize(None) < pd.to_datetime(self.data_update.index[0]).tz_localize(None))
                     if check_chronology:
-                        self.df = self.reader.append(self.data_update)
+                        temp_list = [self.reader, self.data_update]
+                        self.df = pd.concat(temp_list)
+                        #self.df = self.reader.append(self.data_update)
                         # Check if database exists
                         if db_exist():
                             # Add update data to local database

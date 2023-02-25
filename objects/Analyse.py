@@ -175,32 +175,77 @@ class Analyse:
             delayed(self.make_xlsx)(name) for name, mnemonic in liste_complete()[1].items())
         for r in num:
             #prediction, predict_price, predict_gain = self.make_prediction(r[0])
-            self.synoptique = self.synoptique.append({COLUMNS[0]: r[0],  # Nom
-                                                      COLUMNS[1]: r[1],  # Prix
-                                                      COLUMNS[2]: r[2],  # Achat
-                                                      COLUMNS[3]: r[3],  # Vente
-                                                      COLUMNS[4]: r[4],  # Perf
-                                                      COLUMNS[5]: r[13],  # Cac 40
-                                                      COLUMNS[6]: r[5] if r[5] != None else 'N/A',  # 5 ans
-                                                      COLUMNS[7]: r[6] if r[6] != None else 'N/A',  # 3 ans 
-                                                      COLUMNS[8]: r[7] if r[7] != None else 'N/A',  # 1er janv 
-                                                      COLUMNS[9]: r[8],  # Moy/ans
-                                                      COLUMNS[10]: r[9],  # Mois
-                                                      COLUMNS[11]: r[10],  # Semaine
-                                                      COLUMNS[12]: r[11],  # Séance
-                                                      COLUMNS[13]: 'Offensif' if r[12] > 0.75 else 'Défensif',  # Rôle
-                                                      COLUMNS[14]: self.df.loc[self.df['Nom'] == r[0]]['Secteur'].iloc[
-                                                          0] if len(self.df.loc[self.df['Nom'] == r[0]][
-                                                                        'Secteur'].values) > 0 else '',  # Secteur
-                                                      COLUMNS[15]:
-                                                          self.df.loc[self.df['Nom'] == r[0]]['Activité'].iloc[
-                                                              0] if len(self.df.loc[self.df['Nom'] == r[0]][
-                                                                            'Activité'].values) > 0 else '',  # Activité
-                                                      
-                                                     # COLUMNS[13]: prediction,  # Avis
-                                                     # COLUMNS[14]: predict_price,  # Prix 3 mois
-                                                     # COLUMNS[15]: predict_gain  # Gain 3 mois
-                                                      }, ignore_index=True)
+            self.synoptique = pd.concat([self.synoptique,pd.DataFrame([[r[0],  # Nom                                         ])
+                                                                       r[1],  # Prix
+                                                                       r[2],  # Achat
+                                                                       r[3],  # Vente
+                                                                       r[4],  # Perf
+                                                                       r[13],  # Cac 40
+                                                                       r[5] if r[5] != None else 'N/A',  # 5 ans
+                                                                       r[6] if r[6] != None else 'N/A',  # 3 ans
+                                                                       r[7] if r[7] != None else 'N/A',  # 1er janv
+                                                                       r[8],  # Moy/ans
+                                                                       r[9],  # Mois
+                                                                       r[10],  # Semaine
+                                                                       r[11],  # Séance
+                                                                        'Offensif' if r[12] > 0.75 else 'Défensif',  # Rôle
+                                                                        self.df.loc[self.df['Nom'] == r[0]]['Secteur'].iloc[
+                                             0] if len(self.df.loc[self.df['Nom'] == r[0]][
+                                                           'Secteur'].values) > 0 else '',  # Secteur
+                                         self.df.loc[self.df['Nom'] == r[0]]['Activité'].iloc[
+                                             0] if len(self.df.loc[self.df['Nom'] == r[0]][
+                                                           'Activité'].values) > 0 else '']]  # Activité
+
+            # COLUMNS[13]: prediction,  # Avis
+            # COLUMNS[14]: predict_price,  # Prix 3 mois
+            # COLUMNS[15]: predict_gain  # Gain 3 mois
+            , columns=[COLUMNS[0],
+                       COLUMNS[1],
+                       COLUMNS[2],
+                       COLUMNS[3],
+                       COLUMNS[4],
+                       COLUMNS[5],
+                       COLUMNS[6],
+                       COLUMNS[7],
+                       COLUMNS[8],
+                       COLUMNS[9],
+                       COLUMNS[10],
+                       COLUMNS[11],
+                       COLUMNS[12],
+                       COLUMNS[13],
+                       COLUMNS[14],
+
+                       COLUMNS[15]])]
+                       , ignore_index=True)
+
+
+
+            # self.synoptique = self.synoptique.append({COLUMNS[0]: r[0],  # Nom
+            #                                           COLUMNS[1]: r[1],  # Prix
+            #                                           COLUMNS[2]: r[2],  # Achat
+            #                                           COLUMNS[3]: r[3],  # Vente
+            #                                           COLUMNS[4]: r[4],  # Perf
+            #                                           COLUMNS[5]: r[13],  # Cac 40
+            #                                           COLUMNS[6]: r[5] if r[5] != None else 'N/A',  # 5 ans
+            #                                           COLUMNS[7]: r[6] if r[6] != None else 'N/A',  # 3 ans
+            #                                           COLUMNS[8]: r[7] if r[7] != None else 'N/A',  # 1er janv
+            #                                           COLUMNS[9]: r[8],  # Moy/ans
+            #                                           COLUMNS[10]: r[9],  # Mois
+            #                                           COLUMNS[11]: r[10],  # Semaine
+            #                                           COLUMNS[12]: r[11],  # Séance
+            #                                           COLUMNS[13]: 'Offensif' if r[12] > 0.75 else 'Défensif',  # Rôle
+            #                                           COLUMNS[14]: self.df.loc[self.df['Nom'] == r[0]]['Secteur'].iloc[
+            #                                               0] if len(self.df.loc[self.df['Nom'] == r[0]][
+            #                                                             'Secteur'].values) > 0 else '',  # Secteur
+            #                                           COLUMNS[15]:
+            #                                               self.df.loc[self.df['Nom'] == r[0]]['Activité'].iloc[
+            #                                                   0] if len(self.df.loc[self.df['Nom'] == r[0]][
+            #                                                                 'Activité'].values) > 0 else '',  # Activité
+            #
+            #                                          # COLUMNS[13]: prediction,  # Avis
+            #                                          # COLUMNS[14]: predict_price,  # Prix 3 mois
+            #                                          # COLUMNS[15]: predict_gain  # Gain 3 mois
+            #                                           }, ignore_index=True)
 
         self.synoptique[COLUMNS[0]] = self.synoptique[COLUMNS[0]].astype('str')
         self.synoptique[COLUMNS[1]] = self.synoptique[COLUMNS[1]].astype('float')
