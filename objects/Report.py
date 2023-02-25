@@ -292,7 +292,7 @@ class Report:
         plt.close()
 
     def graph_11(self, nom):
-        print('Grap 11', nom)
+        print('Graph 11', nom)
 
         methode = 'close'
         data = Reader(Ticket(nom)).read()
