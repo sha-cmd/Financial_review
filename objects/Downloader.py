@@ -21,7 +21,8 @@ class Downloader:
         self.sharpen()
 
         conn = connexion()
-        write_to_db(self.data, self.data.index.name, conn)
+        name = self.ticket.name.lower().replace(' ', '_')
+        write_to_db(self.data, name, conn)
 
     def rename_columns(self):
         col_list = [col.lower().replace(' ', '_') for col in list(self.data.columns)]
