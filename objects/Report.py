@@ -85,6 +85,7 @@ class Report:
     def create(self):
         # Automation of a report
         # Check if the file exists
+        liste = {name: mnemonic for name, mnemonic in liste_complete()[1].items() if len(Reader(Ticket(name)).read()) > 0}
         if os.path.isfile(SOURCE_DIR + str(Clock().date.date()) + '.tex'):
             files_to_erase = glob(SOURCE_DIR + str(Clock().date.date()) + '*')
             for file in files_to_erase:
@@ -93,7 +94,7 @@ class Report:
             fout.write(START.replace('DATE', str(Clock().date.date())))
 
             for secteur in self.secteurs:
-                noms = [x for x in liste_complete()[1] if
+                noms = [x for x in liste if
                         x in self.df.loc[self.df['Secteur'] == secteur]['Nom'].values.ravel()]
                 fout.write(CHAPITRE.replace('TITRE', str(secteur)))
                 for name in noms:
@@ -112,7 +113,8 @@ class Report:
                     name_us = str(name).replace(' ', '_')
                     fout.write(CORPS.replace('TITRE', name_us))
                     self.data = Analyse()
-                    if name in liste_complete()[1]:
+
+                    if name in liste:
                         data = Reader(Ticket(name)).read()
                         self.data.perf_du_dernier_jour(data, name)
                         fout.write(
