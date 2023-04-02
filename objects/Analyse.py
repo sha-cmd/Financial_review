@@ -171,8 +171,9 @@ class Analyse:
     #         return '', '', ''
 
     def to_xlsx(self):
+        liste = {name: mnemonic for name, mnemonic in liste_complete()[1].items() if len(Reader(Ticket(name)).read()) > 0}
         num = Parallel(n_jobs=-1)(
-            delayed(self.make_xlsx)(name) for name, mnemonic in liste_complete()[1].items())
+            delayed(self.make_xlsx)(name) for name, mnemonic in liste.items())
         for r in num:
             #prediction, predict_price, predict_gain = self.make_prediction(r[0])
             self.synoptique = pd.concat([self.synoptique,pd.DataFrame([[r[0],  # Nom                                         ])
