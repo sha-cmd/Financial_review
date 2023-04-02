@@ -5,7 +5,7 @@ def liste_indices():
         'Sbf 120': "^SBF120",
         'NASDAQ': '^IXIC',
         'Europe Developed Real Estate': 'IFEU',
-        'MSCI WORLD INDEX FUTURES': 'MWL=F'
+        #'MSCI WORLD INDEX FUTURES': 'MWL=F'
     }]
     return indices
 
@@ -41,7 +41,7 @@ def liste_actions_pea():
         # 'ASML':'ASME.F',
         'ATOS': 'ATO.PA',
         'AUBAY': 'AUB.PA',
-        'AUDIOVALLEY RG': 'ALAVY.PA',  #
+       # 'AUDIOVALLEY RG': 'ALAVY.PA',  #
         'AXA': 'CS.PA',
         'AXWAY SOFTWARE': 'AXW.PA',  #
         'BENETEAU': 'BEN.PA',
@@ -89,7 +89,7 @@ def liste_actions_pea():
         'EUROFINS SCIENTIF': 'ERF.PA',
         'EURONEXT': 'ENX.PA',
 #        'EUROPACORP': 'ECP.PA',
-        'EUROPCAR MOBILITY': 'EUCAR.PA',
+        #'EUROPCAR MOBILITY': 'EUCAR.PA',
         'EURO RESSOURCES': 'EUR.PA',
         'EUTELSAT COMMUNICA': 'ETL.PA',
         'FAURECIA': 'EO.PA',
@@ -139,7 +139,7 @@ def liste_actions_pea():
         'PERNOD RICARD': 'RI.PA',
         #'PEUGEOT': 'UG.PA',
         "PIERRE VACANCES": 'VAC.PA',
-        'PROLOGUEREGROUPE': 'PROL.PA',
+        #'PROLOGUEREGROUPE': 'PROL.PA',
         'PUBLICIS GROUPE': 'PUB.PA',
         'QUADIENT SA': 'QDT.PA',
         'RALLYE': 'RAL.PA',
@@ -165,7 +165,7 @@ def liste_actions_pea():
         'STMICROELECTRONICS': 'STM.PA',
 #        'SUEZ': 'SEV.PA',
         'SYNERGIE': 'SDG.PA',
-        'TECHNIPFMC': 'FTI.PA',
+        #'TECHNIPFMC': 'FTI.PA',
         'TELEPERFORMANCE': 'TEP.PA',
         'TF1': 'TFI.PA',
         'THALES': 'HO.PA',
@@ -239,7 +239,7 @@ def liste_actions_pme():
         'METABOLIC EXPLORER': 'METEX.PA',
         'NANOBIOTIX': 'NANO.PA',
         'NICOX': 'COX.PA',
-        'PHARMAGEST INTERAC': 'PHA.PA',
+        #'PHARMAGEST INTERAC': 'PHA.PA',
         'POXEL': 'POXEL.PA',
         'PLASTIC OMNIUM': 'POM.PA',
         'MAISONS MONDE': 'MDM.PA',
@@ -390,4 +390,6 @@ def liste_complete():
     dict_complete.update(liste_actions_cic()[1])
     dict_complete.update(liste_actions_usa()[1])
     dict_complete.update(liste_cryptomonnaies()[1])
+    # Debug
+    #dict_complete = {x: dict_complete[x] for it, x in enumerate(dict_complete.keys()) if it < 7}
     return ['Liste_complete', dict_complete]
