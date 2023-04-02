@@ -42,37 +42,39 @@ class Report:
         self.secteurs = pd.unique(self.df['Secteur'])
 
     def plot(self):
+
+        liste = {name: mnemonic for name, mnemonic in liste_complete()[1].items() if len(Reader(Ticket(name)).read()) > 0}
         Parallel(n_jobs=-1)(
-            delayed(self.graph_01)(name) for name, mnemonic in liste_complete()[1].items())
+            delayed(self.graph_01)(name) for name, mnemonic in liste.items())
         Parallel(n_jobs=-1)(
-            delayed(self.graph_02)(name) for name, mnemonic in liste_complete()[1].items())
+            delayed(self.graph_02)(name) for name, mnemonic in liste.items())
         Parallel(n_jobs=-1)(
-            delayed(self.graph_03)(name) for name, mnemonic in liste_complete()[1].items())
+            delayed(self.graph_03)(name) for name, mnemonic in liste.items())
         Parallel(n_jobs=-1)(
-            delayed(self.graph_04)(name) for name, mnemonic in liste_complete()[1].items())
+            delayed(self.graph_04)(name) for name, mnemonic in liste.items())
         Parallel(n_jobs=-1)(
-            delayed(self.graph_05)(name) for name, mnemonic in liste_complete()[1].items())
+            delayed(self.graph_05)(name) for name, mnemonic in liste.items())
 
         Parallel(n_jobs=-1)(
-            delayed(self.graph_06)(name) for name, mnemonic in liste_complete()[1].items())
+            delayed(self.graph_06)(name) for name, mnemonic in liste.items())
         Parallel(n_jobs=-1)(
-            delayed(self.graph_07)(name) for name, mnemonic in liste_complete()[1].items())
+            delayed(self.graph_07)(name) for name, mnemonic in liste.items())
 
         Parallel(n_jobs=-1)(
-            delayed(self.graph_08)(name) for name, mnemonic in liste_complete()[1].items())
+            delayed(self.graph_08)(name) for name, mnemonic in liste.items())
         Parallel(n_jobs=-1)(
-            delayed(self.graph_09)(name) for name, mnemonic in liste_complete()[1].items())
+            delayed(self.graph_09)(name) for name, mnemonic in liste.items())
         Parallel(n_jobs=-1)(
-            delayed(self.graph_10)(name) for name, mnemonic in liste_complete()[1].items())
+            delayed(self.graph_10)(name) for name, mnemonic in liste.items())
         Parallel(n_jobs=-1)(
-            delayed(self.graph_11)(name) for name, mnemonic in liste_complete()[1].items())
+            delayed(self.graph_11)(name) for name, mnemonic in liste.items())
         Parallel(n_jobs=-1)(
-            delayed(self.graph_12)(name) for name, mnemonic in liste_complete()[1].items())
+            delayed(self.graph_12)(name) for name, mnemonic in liste.items())
 
         Parallel(n_jobs=-1)(
-            delayed(self.sim_monte_carlo)(name) for name, mnemonic in liste_complete()[1].items())
+            delayed(self.sim_monte_carlo)(name) for name, mnemonic in liste.items())
         Parallel(n_jobs=-1)(
-            delayed(self.prophet)(name) for name, mnemonic in liste_complete()[1].items())
+            delayed(self.prophet)(name) for name, mnemonic in liste.items())
 
     def compiler(self):
         os.chdir("reports_pdf")
