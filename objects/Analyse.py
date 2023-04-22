@@ -171,7 +171,8 @@ class Analyse:
     #         return '', '', ''
 
     def to_xlsx(self):
-        liste = {name: mnemonic for name, mnemonic in liste_complete()[1].items() if len(Reader(Ticket(name)).read()) > 0}
+        liste = {name: mnemonic for name, mnemonic in liste_complete()[1].items() if (isinstance(Reader(Ticket(name)).read(), pd.DataFrame))}
+        liste = {name: mnemonic for name, mnemonic in liste.items() if (len(Reader(Ticket(name)).read()) > 74)}
         num = Parallel(n_jobs=-1)(
             delayed(self.make_xlsx)(name) for name, mnemonic in liste.items())
         for r in num:
@@ -340,7 +341,9 @@ class Analyse:
 
     def make_xlsx(self, name):
         data = Reader(Ticket(name)).read()
+        print(name)
         data = self.perf_du_dernier_jour(data, name)
+
         self.beta_calc(name)
         r = [name,
              float(self.price[name]),
