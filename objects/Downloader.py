@@ -20,9 +20,10 @@ class Downloader:
         self.rename_columns()
         self.sharpen()
 
-        conn = connexion()
-        name = self.ticket.name.lower().replace(' ', '_')
-        write_to_db(self.data, name, conn)
+        if len(self.data) > 0:
+            conn = connexion()
+            name = self.ticket.name.lower().replace(' ', '_')
+            write_to_db(self.data, name, conn)
 
     def rename_columns(self):
         col_list = [col.lower().replace(' ', '_') for col in list(self.data.columns)]
@@ -31,6 +32,6 @@ class Downloader:
 
     def sharpen(self):
         try:
-            self.data.drop(['dividends', 'stock_splits'], axis=1, inplace=True)
+            self.data = self.data[["open", "high", "low", "close", "volume"]]
         except KeyError as e:
-            print(f"Pas de données dans {self.ticket.name}")
+            print(f"Pas de données dans {self.ticket.name} : {e}")
