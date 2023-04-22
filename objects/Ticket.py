@@ -11,5 +11,6 @@ class Ticket:
         self.name = name
         self.mnemo = liste_complete()[1][self.name]
         self.name_table = self.name.lower().replace("&", "").replace("/", "").replace("-",
-                                                                                                        "").replace(
-            "  ", " ").replace("  ", " ").replace(' ', '_').replace("(", "").replace(")", "").replace("é", "e").replace("è", "e")
+                                                                                      "").replace(
+            "  ", " ").replace("  ", " ").replace(' ', '_').replace("(", "").replace(")", "").replace("é", "e").replace(
+            "è", "e")
