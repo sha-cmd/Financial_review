@@ -22,7 +22,7 @@ class Downloader:
 
         if len(self.data) > 0:
             conn = connexion()
-            name = self.ticket.name.lower().replace(' ', '_')
+            name = self.ticket.name_table
             write_to_db(self.data, name, conn)
 
     def rename_columns(self):
