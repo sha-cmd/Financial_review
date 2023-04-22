@@ -15,7 +15,7 @@ class Downloader:
         self.ticket = ticket
 
         mnemonic = yf.Ticker(ticket.mnemo)
-        self.data = mnemonic.history(period="max")
+        self.data = mnemonic.history(period="20y")
 
         self.rename_columns()
         self.sharpen()
