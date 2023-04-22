@@ -10,6 +10,6 @@ class Ticket:
     def __init__(self, name: str):
         self.name = name
         self.mnemo = liste_complete()[1][self.name]
-        self.name_table = self.name.lower().replace(' ', '_').replace("&", "").replace("/", "").replace("-",
+        self.name_table = self.name.lower().replace("&", "").replace("/", "").replace("-",
                                                                                                         "").replace(
-            "  ", " ").replace("(", "").replace(")", "")
+            "  ", " ").replace("  ", " ").replace(' ', '_').replace("(", "").replace(")", "").replace("é", "e").replace("è", "e")
