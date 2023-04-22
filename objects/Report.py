@@ -43,7 +43,8 @@ class Report:
 
     def plot(self):
 
-        liste = {name: mnemonic for name, mnemonic in liste_complete()[1].items() if len(Reader(Ticket(name)).read()) > 0}
+        liste = {name: mnemonic for name, mnemonic in liste_complete()[1].items() if (isinstance(Reader(Ticket(name)).read(), pd.DataFrame))}
+        liste = {name: mnemonic for name, mnemonic in liste.items() if len(Reader(Ticket(name)).read()) > 74}
         Parallel(n_jobs=-1)(
             delayed(self.graph_01)(name) for name, mnemonic in liste.items())
         Parallel(n_jobs=-1)(
@@ -85,7 +86,8 @@ class Report:
     def create(self):
         # Automation of a report
         # Check if the file exists
-        liste = {name: mnemonic for name, mnemonic in liste_complete()[1].items() if len(Reader(Ticket(name)).read()) > 0}
+        liste = {name: mnemonic for name, mnemonic in liste_complete()[1].items() if (isinstance(Reader(Ticket(name)).read(), pd.DataFrame))}
+        liste = {name: mnemonic for name, mnemonic in liste.items() if len(Reader(Ticket(name)).read()) > 74}
         if os.path.isfile(SOURCE_DIR + str(Clock().date.date()) + '.tex'):
             files_to_erase = glob(SOURCE_DIR + str(Clock().date.date()) + '*')
             for file in files_to_erase:
