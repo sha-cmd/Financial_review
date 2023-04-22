@@ -1,6 +1,6 @@
 import json
 def liste_indices():
-    with open("indices.json", "r") as file:
+    with open("data/indices.json", "r") as file:
         indices_dict = json.load(file)
     indices = ['Indices', indices_dict]
     return indices
@@ -17,7 +17,7 @@ def print_indices(indices):
 
 
 def liste_actions_pea():
-    with open("pea.json", "r") as file:
+    with open("data/pea.json", "r") as file:
         pea_dict = json.load(file)
     actions = ['Actions_pea', pea_dict]
     return actions
@@ -34,7 +34,9 @@ def print_actions_pea(actions_pea):
 
 
 def liste_actions_pme():
-    actions = ['Actions_pme', ]
+    with open("data/pme.json") as file:
+        pme = json.load(file)
+    actions = ['Actions_pme', pme]
     return actions
 
 
@@ -84,7 +86,7 @@ def print_actions_usa(actions_usa):
 
 
 def liste_mutual_funds():
-    with open("mutual_funds.json", "r") as file:
+    with open("data/mutual_funds.json", "r") as file:
         mutual_funds_dict = json.load(file)
     actions = ['Mutual_funds', mutual_funds_dict]
     return actions
@@ -100,7 +102,7 @@ def print_mutual_funds(mutual_funds):
     return str_describe
 
 def liste_assets():
-    with open("assets.json", "r") as file:
+    with open("data/assets.json", "r") as file:
         assets = json.load(file)
     assets = ["Assets", assets]
     return assets
@@ -119,10 +121,10 @@ def print_assets(mutual_funds):
 def liste_complete():
     dict_complete = {}
     dict_complete.update(liste_indices()[1])
-    dict_complete.update(liste_actions_pme()[1])
-    dict_complete.update(liste_actions_pea()[1])
+    #dict_complete.update(liste_actions_pme()[1])
+    #dict_complete.update(liste_actions_pea()[1])
     dict_complete.update(liste_mutual_funds()[1])
-    dict_complete.update(liste_actions_usa()[1])
+    #dict_complete.update(liste_actions_usa()[1])
     dict_complete.update(liste_assets()[1])
     dict_complete.update(liste_cryptomonnaies()[1])
     # Debug
