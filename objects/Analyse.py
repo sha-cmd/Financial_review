@@ -1,10 +1,7 @@
 import copy
 import numpy as np
 import pandas as pd
-import requests
-import re
 
-from bs4 import BeautifulSoup
 from data.securities import liste_complete, liste_indices
 from decimal import Decimal
 from objects.Clock import Clock
@@ -114,7 +111,10 @@ class Analyse:
 
     def to_txt(self):
         fichier = open("reports_txt/performance_du_jour.txt", "w")
-        Parallel(n_jobs=-1)(delayed(self.make_txt)(name, fichier) for name, mnemonic in self.list_of_stocks.items())
+        liste = {name: mnemonic for name, mnemonic in liste_complete()[1].items() if
+                 (isinstance(Reader(Ticket(name)).read(), pd.DataFrame))}
+        liste = {name: mnemonic for name, mnemonic in liste.items() if (len(Reader(Ticket(name)).read()) > 74)}
+        Parallel(n_jobs=-1)(delayed(self.make_txt)(name, fichier) for name, mnemonic in liste.items())
 
         fichier.close()
 
