@@ -98,9 +98,14 @@ class Report:
             for secteur in self.secteurs:
                 noms = [x for x in liste if
                         x in self.df.loc[self.df['Secteur'] == secteur]['Nom'].values.ravel()]
+                # Gérer l’échappement de l’esperluette en latex
+                secteur = secteur.replace(" & ", r" \& ")
                 fout.write(CHAPITRE.replace('TITRE', str(secteur)))
                 for name in noms:
-                    values_list = [('TITRE', name), ('SITE', self.df.loc[self.df['Nom'] == name]['Adresse'].values[0]),
+                    filename = Ticket(name).name_table
+                    # Remplacer l’esperluette pour l’échapper dans latex
+                    latexname = name.replace(" & ", r" \& ").replace("Small&Mid", r"Small\&Mid").replace("M&G", r"M\&G").replace("S&P", "S\&P")
+                    values_list = [('TITRE', latexname), ('SITE', self.df.loc[self.df['Nom'] == name]['Adresse'].values[0]),
                                    ('WIKI', self.df.loc[self.df['Nom'] == name]['Wiki'].values[0]),
                                    ('BOURSORAMA', self.df.loc[self.df['Nom'] == name]['Boursorama'].values[0]),
                                    ('LAPOSTE', self.df.loc[self.df['Nom'] == name]['Laposte'].values[0]),
@@ -112,12 +117,13 @@ class Report:
                         except Exception:
                             pass
 
-                    name_us = str(name).replace(' ', '_')
-                    fout.write(CORPS.replace('TITRE', name_us))
+                    #name_us = str(name).replace(' ', '_')
+                    fout.write(CORPS.replace('TITRE', filename))
                     self.data = Analyse()
 
                     if name in liste:
                         data = Reader(Ticket(name)).read()
+
                         self.data.perf_du_dernier_jour(data, name)
                         fout.write(
                             TABLE.replace('PRIX', str(round(Decimal(self.data.price[name]), 2))).replace('TITRE',
@@ -149,6 +155,7 @@ class Report:
         print('Graph 01', nom)
         methode = 'close'
         data = Reader(Ticket(nom)).read()
+        filename = Ticket(nom).name_table
         if(len(data) == 0):
             sys.exit(nom, "n'a pas de données dans la base, retirer là des securities")
         data.index = pd.DatetimeIndex([pd.to_datetime(x).tz_localize(None) for x in data.index])
@@ -156,16 +163,17 @@ class Report:
         mpl.use('TkAgg')
         plt.figure(figsize=(10, 6))
         mpf.plot(data.iloc[:, 0:5], type='line', title=STOCK_LEVEL + nom
-                 , savefig='OutputFiles/stockprice_' + methode + '_' + str(nom).replace(' ', '_') + '.png')
+                 , savefig='OutputFiles/stockprice_' + methode + '_' + str(filename).replace(' ', '_') + '.png')
         plt.close()
         mpf.plot(data.iloc[-500:, 0:5], type='line', mav=(12, 20, 50), volume=True, title=STOCK_LEVEL + nom
-                 , savefig='OutputFiles/mva_' + methode + '_' + str(nom).replace(' ', '_') + '.png')
+                 , savefig='OutputFiles/mva_' + methode + '_' + str(filename).replace(' ', '_') + '.png')
         plt.close()
 
     def graph_02(self, nom):
         print('Graph 02', nom)
         methode = 'close'
         data = Reader(Ticket(nom)).read()
+        filename = Ticket(nom).name_table
         data.index = pd.DatetimeIndex([pd.to_datetime(x).tz_localize(None) for x in data.index])
         top = plt.subplot2grid((4, 4), (0, 0), rowspan=3, colspan=4)
         top.plot(data.index, data[methode], label='Prix à la Clôture')
@@ -177,20 +185,21 @@ class Report:
         plt.title("Volume de l'action {}".format(nom))
         plt.gcf().set_size_inches(10, 6)
         plt.subplots_adjust(hspace=0.75)
-        plt.savefig('OutputFiles/stockprice_' + methode + '_' + str(nom).replace(' ', '_') + '.png')
+        plt.savefig('OutputFiles/stockprice_' + methode + '_' + str(filename).replace(' ', '_') + '.png')
         plt.close()
 
     def graph_03(self, nom):
         print('Graph 03', nom)
         methode = 'close'
         data = Reader(Ticket(nom)).read()
+        filename = Ticket(nom).name_table
         data.index = pd.DatetimeIndex([pd.to_datetime(x).tz_localize(None) for x in data.index])
         # Volatility plot
         df_filled = data[[methode]].asfreq('D', method='ffill')
         df_returns = df_filled.pct_change()
         df_std = df_returns[-500:].rolling(window=30, min_periods=30).std()
         df_std.plot(label='Volatilité à la Clôture 30')
-        plt.savefig('OutputFiles/volatility_30_' + methode + '_' + str(nom).replace(' ', '_') + '.png')
+        plt.savefig('OutputFiles/volatility_30_' + methode + '_' + str(filename).replace(' ', '_') + '.png')
 
         plt.clf()
         plt.close()
@@ -199,12 +208,13 @@ class Report:
         print('Graph 04', nom)
         methode = 'close'
         data = Reader(Ticket(nom)).read()
+        filename = Ticket(nom).name_table
         data.index = pd.DatetimeIndex([pd.to_datetime(x).tz_localize(None) for x in data.index])
         df_filled = data[[methode]].asfreq('D', method='ffill')
         df_returns = df_filled.pct_change()
         df_std = df_returns[-250:].rolling(window=15, min_periods=15).std()
         df_std.plot(label='Volatilité à la Clôture 15')
-        plt.savefig('OutputFiles/volatility_15_' + methode + '_' + str(nom).replace(' ', '_') + '.png')
+        plt.savefig('OutputFiles/volatility_15_' + methode + '_' + str(filename).replace(' ', '_') + '.png')
 
         plt.clf()
         plt.close()
@@ -213,12 +223,13 @@ class Report:
         print('Graph 05', nom)
         methode = 'close'
         data = Reader(Ticket(nom)).read()
+        filename = Ticket(nom).name_table
         data.index = pd.DatetimeIndex([pd.to_datetime(x).tz_localize(None) for x in data.index])
         df_filled = data[[methode]].asfreq('D', method='ffill')
         df_returns = df_filled.pct_change()
         df_std = df_returns[-50:].rolling(window=7, min_periods=7).std()
         df_std.plot(label='Volatilité à la Clôture 7')
-        plt.savefig('OutputFiles/volatility_7_' + methode + '_' + str(nom).replace(' ', '_') + '.png')
+        plt.savefig('OutputFiles/volatility_7_' + methode + '_' + str(filename).replace(' ', '_') + '.png')
 
         plt.clf()
         plt.close()
@@ -227,12 +238,13 @@ class Report:
         print('Graph 06', nom)
         methode = 'close'
         data = Reader(Ticket(nom)).read()
+        filename = Ticket(nom).name_table
         data.index = pd.DatetimeIndex([pd.to_datetime(x).tz_localize(None) for x in data.index])
         df_filled = data[[methode]].asfreq('D', method='ffill')
         df_returns = df_filled.pct_change()
         df_std = df_returns[-25:].rolling(window=3, min_periods=3).std()
         df_std.plot(label='Volatilité à la Clôture 3')
-        plt.savefig('OutputFiles/volatility_3_' + methode + '_' + str(nom).replace(' ', '_') + '.png')
+        plt.savefig('OutputFiles/volatility_3_' + methode + '_' + str(filename).replace(' ', '_') + '.png')
         del df_filled, df_returns, df_std
         plt.clf()
         plt.close()
@@ -242,13 +254,14 @@ class Report:
 
         methode = 'close'
         data = Reader(Ticket(nom)).read()
+        filename = Ticket(nom).name_table
         data.index = pd.DatetimeIndex([pd.to_datetime(x).tz_localize(None) for x in data.index])
         # Volatility plot
         df_filled = data[['volume']].asfreq('D', method='ffill')
         df_returns = df_filled.pct_change()
         df_std = df_returns[-500:].rolling(window=30, min_periods=30).std()
         df_std.plot(label='Volatilité au Volume 30')
-        plt.savefig('OutputFiles/volat_volub_30_' + methode + '_' + str(nom).replace(' ', '_') + '.png')
+        plt.savefig('OutputFiles/volat_volub_30_' + methode + '_' + str(filename).replace(' ', '_') + '.png')
 
         plt.clf()
         plt.close()
@@ -257,12 +270,13 @@ class Report:
         print('Graph 08', nom)
         methode = 'close'
         data = Reader(Ticket(nom)).read()
+        filename = Ticket(nom).name_table
         data.index = pd.DatetimeIndex([pd.to_datetime(x).tz_localize(None) for x in data.index])
         df_filled = data[['volume']].asfreq('D', method='ffill')
         df_returns = df_filled.pct_change()
         df_std = df_returns[-250:].rolling(window=15, min_periods=15).std()
         df_std.plot(label='Volatilité au Volume 15')
-        plt.savefig('OutputFiles/volat_volub_15_' + methode + '_' + str(nom).replace(' ', '_') + '.png')
+        plt.savefig('OutputFiles/volat_volub_15_' + methode + '_' + str(filename).replace(' ', '_') + '.png')
 
         plt.clf()
 
@@ -273,12 +287,13 @@ class Report:
         print('Graph 09', nom)
         methode = 'close'
         data = Reader(Ticket(nom)).read()
+        filename = Ticket(nom).name_table
         data.index = pd.DatetimeIndex([pd.to_datetime(x).tz_localize(None) for x in data.index])
         df_filled = data[['volume']].asfreq('D', method='ffill')
         df_returns = df_filled.pct_change()
         df_std = df_returns[-50:].rolling(window=7, min_periods=7).std()
         df_std.plot(label='Volatilité au Volume 7')
-        plt.savefig('OutputFiles/volat_volub_7_' + methode + '_' + str(nom).replace(' ', '_') + '.png')
+        plt.savefig('OutputFiles/volat_volub_7_' + methode + '_' + str(filename).replace(' ', '_') + '.png')
 
         plt.clf()
         plt.close()
@@ -287,12 +302,13 @@ class Report:
         print('Graph 10', nom)
         methode = 'close'
         data = Reader(Ticket(nom)).read()
+        filename = Ticket(nom).name_table
         data.index = pd.DatetimeIndex([pd.to_datetime(x).tz_localize(None) for x in data.index])
         df_filled = data[['volume']].asfreq('D', method='ffill')
         df_returns = df_filled.pct_change()
         df_std = df_returns[-25:].rolling(window=3, min_periods=3).std()
         df_std.plot(label='Volatilité au Volume 3')
-        plt.savefig('OutputFiles/volat_volub_3_' + methode + '_' + str(nom).replace(' ', '_') + '.png')
+        plt.savefig('OutputFiles/volat_volub_3_' + methode + '_' + str(filename).replace(' ', '_') + '.png')
         del df_filled, df_returns, df_std
         plt.clf()
         plt.close()
@@ -302,13 +318,14 @@ class Report:
 
         methode = 'close'
         data = Reader(Ticket(nom)).read()
+        filename = Ticket(nom).name_table
         data.index = pd.DatetimeIndex([pd.to_datetime(x).tz_localize(None) for x in data.index])
         # Quantile-quantile plot
         figure = plt.figure(figsize=(8, 4))
         ax = figure.add_subplot(111)
         stats.probplot(data[-500:][methode].pct_change(periods=1).dropna(), dist='norm', plot=ax)
         # plt.show();
-        plt.savefig('OutputFiles/quantile_' + methode + '_' + str(nom).replace(' ', '_') + '.png')
+        plt.savefig('OutputFiles/quantile_' + methode + '_' + str(filename).replace(' ', '_') + '.png')
         # figur.clear()
         del figure, ax
         figure = ''
@@ -321,16 +338,17 @@ class Report:
 
         methode = 'close'
         data = Reader(Ticket(nom)).read()
+        filename = Ticket(nom).name_table
         data.index = pd.DatetimeIndex([pd.to_datetime(x).tz_localize(None) for x in data.index])
         mpf.plot(data.iloc[-500:], type='line', mav=(5, 10, 25), volume=True, title=STOCK_LEVEL + nom
-                 , savefig='OutputFiles/mva_short_' + methode + '_' + str(nom).replace(' ', '_') + '.png')
+                 , savefig='OutputFiles/mva_short_' + methode + '_' + str(filename).replace(' ', '_') + '.png')
         plt.close()
 
     def sim_monte_carlo(self, nom, methode='close'):
         print('Simulation Monte Carlo', nom)
 
         data = Reader(Ticket(nom)).read()[methode]
-
+        filename = Ticket(nom).name_table
         log_returns = np.log(1 + data.pct_change())
         u = log_returns.mean()
         var = log_returns.var()
@@ -353,7 +371,7 @@ class Report:
         plt.title(
             'Méthode de Monte-Carlo (calculs d\'aléas sur les 250 jours de marché à venir) pour {}'.format(nom))
         plt.plot(price_list);
-        plt.savefig('OutputFiles/monaco_' + methode + '_' + str(nom).replace(' ', '_') + '.png')
+        plt.savefig('OutputFiles/monaco_' + methode + '_' + str(filename).replace(' ', '_') + '.png')
         plt.clf()
         plt.close()
         del price_list, log_returns, u, var, drift, stdev, daily_returns, data
@@ -363,6 +381,7 @@ class Report:
     def prophet(self, nom, methode='close'):
         print('Prédiction Meta', nom)
         data = Reader(Ticket(nom)).read()[[methode]]
+        filename = Ticket(nom).name_table
         data.index = pd.DatetimeIndex([pd.to_datetime(x).tz_localize(None) for x in data.index])
         data.reset_index(inplace=True)
         data = data.rename(columns={'index': 'ds', methode: 'y'})
@@ -372,5 +391,5 @@ class Report:
         future.tail()
         forecast = m.predict(future)
         forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].tail()
-        m.plot(forecast).savefig('OutputFiles/prophet_' + methode + '_' + str(nom).replace(' ', '_') + '.png')
-        m.plot_components(forecast).savefig('OutputFiles/prophet_components_' + methode + '_' + str(nom).replace(' ', '_') + '.png')
+        m.plot(forecast).savefig('OutputFiles/prophet_' + methode + '_' + str(filename).replace(' ', '_') + '.png')
+        m.plot_components(forecast).savefig('OutputFiles/prophet_components_' + methode + '_' + str(filename).replace(' ', '_') + '.png')
