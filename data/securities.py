@@ -129,4 +129,15 @@ def liste_complete():
     dict_complete.update(liste_cryptomonnaies()[1])
     # Debug
     #dict_complete = {x: dict_complete[x] for it, x in enumerate(dict_complete.keys()) if it < 7}
+    # Work with a selection of stocks
+    with open("data/selection.txt", "r") as file:
+        select_list = file.readlines()
+        select_option = True if len(select_list) > 1 else False
+        select_list = [name.replace("\n", "") for name in select_list]
+    if select_option:
+        select_complete = {str(name): dict_complete[str(name)] for name in select_list}
+        select_complete.update(liste_indices()[1])
+        del dict_complete
+        dict_complete = select_complete
+
     return ['Liste_complete', dict_complete]
