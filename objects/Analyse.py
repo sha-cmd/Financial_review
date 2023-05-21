@@ -313,25 +313,25 @@ class Analyse:
         # worksheet.set_column('S:S', 9)
         # Activité
         # worksheet.set_column('T:T', 19)
-        worksheet.conditional_format('C2:C600', {'type': '3_color_scale'})
-        worksheet.conditional_format('E2:E600', {'type': 'data_bar'})
-        worksheet.conditional_format('F2:F600', {'type': 'data_bar'})
-        worksheet.conditional_format('G2:G600', {'type': 'data_bar'})
-        worksheet.conditional_format('H2:H600', {'type': 'data_bar'})
-        worksheet.conditional_format('I2:I600', {'type': 'data_bar'})
-        worksheet.conditional_format('J2:J600', {'type': 'data_bar'})
-        worksheet.conditional_format('K2:K600', {'type': 'data_bar'})
-        worksheet.conditional_format('L2:L600', {'type': 'data_bar'})
-        worksheet.conditional_format('M2:M600', {'type': 'data_bar'})
+        worksheet.conditional_format('C2:C1400', {'type': '3_color_scale'})
+        worksheet.conditional_format('E2:E1400', {'type': 'data_bar'})
+        worksheet.conditional_format('F2:F1400', {'type': 'data_bar'})
+        worksheet.conditional_format('G2:G1400', {'type': 'data_bar'})
+        worksheet.conditional_format('H2:H1400', {'type': 'data_bar'})
+        worksheet.conditional_format('I2:I1400', {'type': 'data_bar'})
+        worksheet.conditional_format('J2:J1400', {'type': 'data_bar'})
+        worksheet.conditional_format('K2:K1400', {'type': 'data_bar'})
+        worksheet.conditional_format('L2:L1400', {'type': 'data_bar'})
+        worksheet.conditional_format('M2:M1400', {'type': 'data_bar'})
 
-        worksheet.conditional_format('N2:N600', {'type': 'data_bar'})
-        #worksheet.conditional_format('O2:O600', {'type': 'data_bar'})
-        #worksheet.conditional_format('P2:P600', {'type': 'data_bar'})
-        #worksheet.conditional_format('Q2:Q600', {'type': 'data_bar'})
+        worksheet.conditional_format('N2:N1400', {'type': 'data_bar'})
+        #worksheet.conditional_format('O2:O1400', {'type': 'data_bar'})
+        #worksheet.conditional_format('P2:P1400', {'type': 'data_bar'})
+        #worksheet.conditional_format('Q2:Q1400', {'type': 'data_bar'})
 
-        worksheet.conditional_format('O2:R600',
+        worksheet.conditional_format('O2:R1400',
                                      {'type': 'text', 'criteria': 'containing', 'value': 'Offensif', 'format': format3})
-        worksheet.conditional_format('O2:R600',
+        worksheet.conditional_format('O2:R1400',
                                      {'type': 'text', 'criteria': 'containing', 'value': 'Défensif', 'format': format4})
         c = Clock()
         worksheet.write(0, 0, c.date)
