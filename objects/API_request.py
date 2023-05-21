@@ -118,10 +118,10 @@ class API_request:
         self.data = pd.DataFrame()
         n = 0
         for name, mnemonic in liste.items():
-            print(name, mnemonic)
-            print(self.check_statement_presence(str(mnemonic)))
             if self.check_statement_presence(mnemonic):
+                self.result = []
                 url = self.service_dict[self.service_name[nb_schema]].replace("AAPL", mnemonic)
+                print(url)
                 self.get_jsonparsed_data(url)  # load result in self.result
                 if self.result:
                     self.result[0]["name"] = name
@@ -132,8 +132,10 @@ class API_request:
                 n += 1
                 print("Mnemonic pas dans l’API : " + name + ", " + mnemonic)
                 continue
-        print (str(n) + " n’ont été trouvés")
+        print(str(n) + " n’ont pas été trouvés")
 
         conn = connexion()
         name = self.service_name[nb_schema]
         write_to_db(self.data, name, conn)
+        self.data.to_csv("reports_excel/api_doc.csv")
+
