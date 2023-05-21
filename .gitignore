@@ -18,3 +18,4 @@ data/financial_db*
 nohup.out
 selenium*
 reports_adoc
+data/*.json

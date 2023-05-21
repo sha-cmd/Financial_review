@@ -121,12 +121,12 @@ def print_assets(mutual_funds):
 def liste_complete():
     dict_complete = {}
     dict_complete.update(liste_indices()[1])
-    #dict_complete.update(liste_actions_pme()[1])
-    #dict_complete.update(liste_actions_pea()[1])
+    dict_complete.update(liste_actions_pme()[1])
+    dict_complete.update(liste_actions_pea()[1])
     dict_complete.update(liste_mutual_funds()[1])
     #dict_complete.update(liste_actions_usa()[1])
     dict_complete.update(liste_assets()[1])
-    dict_complete.update(liste_cryptomonnaies()[1])
+    #dict_complete.update(liste_cryptomonnaies()[1])
     # Debug
     #dict_complete = {x: dict_complete[x] for it, x in enumerate(dict_complete.keys()) if it < 7}
     # Work with a selection of stocks
