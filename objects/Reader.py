@@ -38,8 +38,8 @@ class Reader:
             df = pd.read_sql_query("SELECT * FROM `" + self.table + suffix + "`", conn, index_col='date')
             return True, str(df.index[0]).split(' ')[0], str(df.index[-1]).split(' ')[0]
 
-        except (OperationalError, DatabaseError) as e:
-            logger.debug(self.name + ' n\'est pas dans la table')
+        except (OperationalError, DatabaseError, IndexError) as e:
+            logger.debug(self.name + ' n\'est pas dans la table ou n’a pas de données')
             print(e, 'Class Reader')
             return False, DATE_DEBUT, Clock().last_day
 

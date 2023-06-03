@@ -56,7 +56,7 @@ class Update:
                              + ", date: " + self.reader.index[-1] + " et " + str(self.date.from_date))
                 print('Problème de dates dans les indexes, nom: ' + self.ticket.name_table
                       + ", date: " + self.reader.index[-1] + " et " + str(self.date.from_date))
-        except AttributeError as e:
+        except (AttributeError, IndexError) as e:
             print(e, self.ticket.name_table + ' n’existe pas en table. Téléchargement en cours...')
             FetchAndSave(self.ticket.name)
 

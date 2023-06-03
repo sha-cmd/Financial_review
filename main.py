@@ -36,15 +36,15 @@ def pdf_report():
 
 def api_report():
     a = API_request()
-    a.to_xlsx(4)
+    a.to_xlsx(6)  # 2 et 4 et 6
 
 def main():
     #create_db()
     #maj_db()
     #text_report()
-    excel_report()
+    #excel_report()
     #pdf_report()
-    #api_report()
+    api_report()
 
 if __name__ == '__main__':
     main()

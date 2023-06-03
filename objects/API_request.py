@@ -137,5 +137,5 @@ class API_request:
         conn = connexion()
         name = self.service_name[nb_schema]
         write_to_db(self.data, name, conn)
-        self.data.to_csv("reports_excel/api_doc.csv")
+        self.data.to_csv("reports_excel/api_doc" + str(nb_schema) + ".csv")
 
