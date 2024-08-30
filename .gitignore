@@ -1,7 +1,5 @@
 .venv
 .pytest_cache
-Notebooks
-OutputFiles
 reports_excel
 reports_pdf
 reports_txt
@@ -18,5 +16,3 @@ data/financial_db*
 nohup.out
 selenium*
 reports_adoc
-data/*.json
-tex/Strategie_PME.xlsx
