@@ -12,6 +12,7 @@ import json
 import sys
 
 from copy import deepcopy
+from datetime import datetime
 from typing import Dict, List, Any
 
 import pandas as pd
@@ -21,6 +22,7 @@ from objects.Reader import Reader
 from objects.Ticket import Ticket
 from objects.db_conn import write_to_db
 from objects.db_conn import connexion
+
 
 class API_request:
 
@@ -138,4 +140,8 @@ class API_request:
         name = self.service_name[nb_schema]
         write_to_db(self.data, name, conn)
         self.data.to_csv("reports_excel/api_doc" + str(nb_schema) + ".csv")
+        if nb_schema == 10:
+            df = self.data.loc[self.data["name"].notna(), :]
+            df.to_csv("reports_excel/api_doc" + str(nb_schema) + "_plus.csv")
+
 
