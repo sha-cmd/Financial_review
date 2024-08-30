@@ -114,8 +114,9 @@ class Analyse:
         liste = {name: mnemonic for name, mnemonic in liste_complete()[1].items() if
                  (isinstance(Reader(Ticket(name)).read(), pd.DataFrame))}
         liste = {name: mnemonic for name, mnemonic in liste.items() if (len(Reader(Ticket(name)).read()) > 74)}
-        Parallel(n_jobs=-1)(delayed(self.make_txt)(name, fichier) for name, mnemonic in liste.items())
-
+        #Parallel(n_jobs=-1)(delayed(self.make_txt)(name, fichier) for name, mnemonic in liste.items())
+        for name, mnemonic in liste.items():
+            self.make_txt(name, fichier)
         fichier.close()
 
     def make_txt(self, name, fichier):
