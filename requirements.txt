@@ -11,3 +11,4 @@ mplfinance
 openpyxl
 xlsxwriter
 plotly
+pydrive2
