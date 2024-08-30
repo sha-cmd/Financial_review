@@ -1,5 +1,6 @@
+# Si toutes les lignes sont commentées, le programme travaille sur l’ensemble des valeurs
 #Action Total SE
-Action L'Oréal
+#Action L'Oréal
 #Action STMicroelectronics
 #Action Veolia Environnement
 #Action Air Liquide
