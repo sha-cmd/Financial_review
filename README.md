@@ -30,3 +30,11 @@ Tableau synoptique :
 Rapport complet :
 
 ![](img/sample_02.png)
+
+Exemples présents dans les dossiers de sorties :
+
+* [rapport textuel](reports_txt/performance_du_jour.txt)
+
+* [rapport excel](reports_excel/2024-08-30_synoptique.xlsx)
+
+* [rapport pdf](reports_pdf/2024-08-30.pdf)
