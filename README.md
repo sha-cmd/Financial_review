@@ -37,4 +37,4 @@ Exemples présents dans les dossiers de sorties :
 
 * [rapport excel](reports_excel/2024-08-30_synoptique.xlsx)
 
-* [rapport pdf](reports_pdf/2024-08-30.pdf)
+* [rapport pdf](reports_pdf/2024-08-30.pdf) (1 seule action dans l’exemple)
