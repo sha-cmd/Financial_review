@@ -41,8 +41,8 @@ class Analyse:
         self.synoptique = pd.DataFrame(columns=COLUMNS)
 
     def perf_du_dernier_jour(self, data, name):
-        self.perf_shot.update({name: round(((data['close'][-1] /
-                                             data['close'][-2]) - 1) * 100
+        self.perf_shot.update({name: round(((data.iloc[-1]['close'] /
+                                             data.iloc[-2]['close'] ) - 1) * 100
                                            , 2)})
         self.price.update(
             {name: copy.deepcopy(round(data.iloc[-1]['close'], 2))})
@@ -59,24 +59,24 @@ class Analyse:
         self.avg_d_dis.update({name: round(data['Dis_ror'].mean() * 100, 2)})
         self.avg_a_dis.update({name: round(data['Dis_ror'].mean() * 250 * 100, 2)})
         if data['close'].count() >= 250:
-            self.avg1.update({name: round(((data['close'][-1] /
-                                            data['close'][-250]) - 1) * 100, 2)})
+            self.avg1.update({name: round(((data.iloc[-1]['close'] /
+                                            data.iloc[-250]['close']) - 1) * 100, 2)})
         else:
             self.avg1.update({name: None})
         if data['close'].count() >= 750:
-            self.avg3.update({name: round(((data['close'][-1] /
-                                            data['close'][-750]) - 1) * 100, 2)})
+            self.avg3.update({name: round(((data.iloc[-1]['close'] /
+                                            data.iloc[-750]['close']) - 1) * 100, 2)})
         else:
             self.avg3.update({name: None})
         if data['close'].count() >= 1250:
-            self.avg5.update({name: round(((data['close'][-1] /
-                                            data['close'][-1250]) - 1) * 100, 2)})
+            self.avg5.update({name: round(((data.iloc[-1]['close'] /
+                                            data.iloc[-1250]['close']) - 1) * 100, 2)})
         else:
             self.avg5.update({name: None})
-        self.avg5j.update({name: round(((data['close'][-1] /
-                                         data['close'][-5]) - 1) * 100, 2)})
-        self.avg25j.update({name: round(((data['close'][-1] /
-                                          data['close'][-25]) - 1) * 100, 2)})
+        self.avg5j.update({name: round(((data.iloc[-1]['close'] /
+                                         data.iloc[-5]['close']) - 1) * 100, 2)})
+        self.avg25j.update({name: round(((data.iloc[-1]['close'] /
+                                          data.iloc[-25]['close']) - 1) * 100, 2)})
         data_cac40 = Reader(Ticket('CAC 40')).read()
         try:
             self.avg_cac40.update({name: round(((data_cac40.at[data.index[-1], 'close'] /
