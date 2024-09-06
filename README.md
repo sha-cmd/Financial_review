@@ -1,10 +1,28 @@
 # Financial_review
 
 # Installation
+Installation tester avec Python 3.10.12
+Pour les rapports pdf, ce programme nécessite l’installation de pdflatex.
+
+Sur windows : installer [MikTex](https://miktex.org/)
+
+Sur linux :
+```
+sudo apt install texlive-latex-base
+sudo apt install texlive-fonts-recommended
+sudo apt install texlive-fonts-extra
+sudo apt install texlive-latex-extra
+pdflatex --version
+```
+Assurer vous de mettre pdflatex dans vos variables Path du système, pour pouvoir le lancer depuis le dépôt local git de Financial_review
+
+Puis pour installer l’environnement Python,
+Dans le répertoire git cloné :
 ```
 $python venv .venv
 $source .venv/bin/activate
 $pip install -r requirements.txt
+# Puis lancer le programme avec
 python main.py
 ```
 Pour créer la base de données, dans main.py exécuter create_db
