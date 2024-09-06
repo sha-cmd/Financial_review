@@ -13,8 +13,9 @@ import mplfinance as mpf
 from glob import glob
 from scipy import stats
 import pandas as pd
-from prophet import Prophet
 import numpy as np
+np.float_ = np.float64
+from prophet import Prophet
 from scipy.stats import norm
 from decimal import Decimal
 import os
